@@ -4,7 +4,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_SECADDRESS = sprintf("SELECT * FROM SECADDRESS WHERE SECADDRESS = '%s'", $_GET['secaddress']);
 $SECADDRESS = mysql_query($query_SECADDRESS, $tryconnection) or die(mysql_error());
-$row_SECADDRESS = mysql_fetch_assoc($SECADDRESS);
+$row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS);
 
 if (!empty($_POST['tela'])){$tel=$_POST['tela'].'-'.$_POST['telb'];}
 if (!empty($_POST['tel2a'])){$tel2=$_POST['tel2a'].'-'.$_POST['tel2b'];}
@@ -177,5 +177,5 @@ function skip(x,y){
 </body>
 <!-- InstanceEnd --></html>
 <?php 
-mysql_free_result($SECADDRESS);
+mysqli_free_result($SECADDRESS);
 ?>

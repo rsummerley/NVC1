@@ -23,7 +23,7 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
 $pdob=$row_PATIENT_CLIENT['PDOB'];
@@ -31,7 +31,7 @@ $psex=$row_PATIENT_CLIENT['PSEX'];
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR ORDER BY DOCTOR ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $cat=$_GET['subcat'];
 
@@ -39,14 +39,14 @@ function categ($tryconnection)
 {
 $query_CATEGORY ="SELECT DISTINCT TCATGRY, TTYPE FROM DIAGNOSI ORDER BY TCATGRY ASC";
 $CATEGORY = mysql_query($query_CATEGORY, $tryconnection) or die(mysql_error());
-$row_CATEGORY = mysql_fetch_assoc($CATEGORY);
+$row_CATEGORY = mysqli_fetch_assoc($CATEGORY);
 
 echo"<select name='category1' class='SelectList' id='category1' multiple='multiple' onchange='category();' >";
 do {
 echo"<option value='".$row_CATEGORY['TCATGRY']."'>";
 echo $row_CATEGORY['TTYPE'];
 echo"</option>\n";
-} while ($row_CATEGORY = mysql_fetch_assoc($CATEGORY));
+} while ($row_CATEGORY = mysqli_fetch_assoc($CATEGORY));
 echo"</select>";		 
 
 }
@@ -56,7 +56,7 @@ function subcateg($tryconnection, $cat)
 {
 $query_PRODUCTSERVICE = sprintf("SELECT TNO, TDESCR, TTYPE, TCATGRY FROM DIAGNOSI WHERE TCATGRY = '%s' ORDER BY TNO ASC",mysql_real_escape_string($cat));
 $PRODUCTSERVICE = mysql_query($query_PRODUCTSERVICE, $tryconnection) or die(mysql_error());
-$row_PRODUCTSERVICE = mysql_fetch_assoc($PRODUCTSERVICE);
+$row_PRODUCTSERVICE = mysqli_fetch_assoc($PRODUCTSERVICE);
 
 echo "<input type='hidden' name='tno' value='".$row_PRODUCTSERVICE['TNO']."' />";
 echo "<input type='hidden' name='ttype' value='".mysql_real_escape_string($row_PRODUCTSERVICE['TTYPE'])."' />";
@@ -66,7 +66,7 @@ do {
 echo"<option value='".$row_PRODUCTSERVICE['TDESCR']."'>";
 echo $row_PRODUCTSERVICE['TDESCR'];
 echo"</option>";
-} while ($row_PRODUCTSERVICE = mysql_fetch_assoc($PRODUCTSERVICE));
+} while ($row_PRODUCTSERVICE = mysqli_fetch_assoc($PRODUCTSERVICE));
 echo"</select>";		 
 
 }
@@ -101,7 +101,7 @@ if (isset($_POST['save'])){
 	//insert into MEDICAL HISTORY
 	$query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 	$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-	$row_PREFER = mysql_fetch_assoc($PREFER);
+	$row_PREFER = mysqli_fetch_assoc($PREFER);
 	
 	$treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 	$treatmxx="TREATM".floor($treatmxx);

@@ -27,7 +27,7 @@ $_SESSION['path']="3close";
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
 $pdob=$row_PATIENT_CLIENT['PDOB'];
@@ -35,26 +35,26 @@ $psex=$row_PATIENT_CLIENT['PSEX'];
 
 $query_HXFILTER = "SELECT * FROM HXFILTER WHERE HXGROUP='1'";
 $HXFILTER = mysql_query($query_HXFILTER, $tryconnection) or die(mysql_error());
-$row_HXFILTER = mysql_fetch_assoc($HXFILTER);
+$row_HXFILTER = mysqli_fetch_assoc($HXFILTER);
 
 $query_HXFILTER2 = "SELECT * FROM HXFILTER WHERE HXGROUP='2'";
 $HXFILTER2 = mysql_query($query_HXFILTER2, $tryconnection) or die(mysql_error());
-$row_HXFILTER2 = mysql_fetch_assoc($HXFILTER2);
+$row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2);
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR ORDER BY DOCTOR ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_HXBUFFER = sprintf("SELECT * FROM HXBUFFER WHERE HXPETID='$patient'");
 $HXBUFFER = mysql_query($query_HXBUFFER, $tryconnection) or die(mysql_error());
-$row_HXBUFFER = mysql_fetch_assoc($HXBUFFER);
+$row_HXBUFFER = mysqli_fetch_assoc($HXBUFFER);
 
 
 $filter;
@@ -296,7 +296,7 @@ xiframe.scrollTop = xiframe.scrollHeight;
         <option></option>
             <?php do { ?>
 		<option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
 		</select>              </td>
               <td width="217" height="20" align="center">&nbsp;</td>
               <td width="171" height="20"><label><input name="" type="checkbox" value="" />Farm/Family History</label></td>
@@ -320,7 +320,7 @@ xiframe.scrollTop = xiframe.scrollHeight;
 				if (isset($_POST['filter'])) {if (in_array($row_HXFILTER['HXCAT'], $_POST['filter'])){echo "checked";}}
 			
 			echo " />".$row_HXFILTER['HXCNAME']."</label>&nbsp;&nbsp;";
-					} while ($row_HXFILTER = mysql_fetch_assoc($HXFILTER));
+					} while ($row_HXFILTER = mysqli_fetch_assoc($HXFILTER));
 			
 			do{
 			echo "<label class='hidden'><input name='filter[]' id='".substr($row_HXFILTER2['HXCNAME'],0,3)."' type='checkbox' value='".$row_HXFILTER2['HXCAT']."'";
@@ -328,7 +328,7 @@ xiframe.scrollTop = xiframe.scrollHeight;
 				//if (isset($_POST['filter'])) {if (in_array($row_HXFILTER2['HXCAT'], $_POST['filter'])){echo "checked";}}
 			
 			echo " />".$row_HXFILTER2['HXCNAME']."</label>";
-					} while ($row_HXFILTER2 = mysql_fetch_assoc($HXFILTER2));
+					} while ($row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2));
 			
 			?>
             <label class='hidden'><input name='filter[]' id='Sub' type='checkbox' value='' <?php //if (isset($_POST['filter'])) {if (in_array($row_HXFILTER2['HXCAT'], $_POST['filter'])){echo "checked";}} ?>/>Subjective</label>
@@ -346,7 +346,7 @@ xiframe.scrollTop = xiframe.scrollHeight;
 		////////////////////// PRESENTING PROBLEM ////////////////////////////////
 		$query_RECEP = "SELECT RECEPID, PROBLEM, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE RFPETID='$patient'";
 		$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-		$row_RECEP = mysql_fetch_assoc($RECEP);
+		$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 		echo $row_RECEP['PROBLEM'];
 		

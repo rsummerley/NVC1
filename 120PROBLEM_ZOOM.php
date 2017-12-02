@@ -10,7 +10,7 @@ $recepid=$_GET['recepid'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_RECEP = "SELECT *, DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN, DATE_FORMAT(TIME, '$timeformat') AS TIME FROM RECEP WHERE RECEPID='$recepid'";
 $RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 
 $patient=$row_RECEP['RFPETID'];

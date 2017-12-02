@@ -5,7 +5,7 @@ require_once('../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CLIENT = sprintf("SELECT * FROM ARCUSTO WHERE CUSTNO = '%s'", $_GET['client']);
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 if (!empty($_POST['phonea'])){$phone=$_POST['phonea'].'-'.$_POST['phoneb'];}
 if (!empty($_POST['phone2a'])){$phone2=$_POST['phone2a'].'-'.$_POST['phone2b'];}
@@ -64,7 +64,7 @@ else if (isset($_POST['save']) && $_GET['client'] == '0') {
 //get the CUSTNO from CRITDATA
 $query_CUSTNO = "SELECT LASTCUST FROM CRITDATA LIMIT 1 ";
 $CUSTNO = mysql_query($query_CUSTNO, $tryconnection) or die(mysql_error());
-$row_CUSTNO = mysql_fetch_assoc($CUSTNO);
+$row_CUSTNO = mysqli_fetch_assoc($CUSTNO);
 $newcustno=$row_CUSTNO['LASTCUST']+1;
 //update CRITDATA with the new custno
 $update_CRITDATA="UPDATE CRITDATA SET LASTCUST='$newcustno'";

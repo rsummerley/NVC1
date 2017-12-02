@@ -61,12 +61,12 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $has_Auto = "SELECT AUTOROLL FROM CRITDATA LIMIT 1 " ;
 $query_Auto = mysql_query($has_Auto, $tryconnection) or die(mysql_error()) ;
-$row_Auto = mysql_fetch_array($query_Auto) ;
+$row_Auto = mysqli_fetch_array($query_Auto) ;
 $autodate = $row_Auto['AUTOROLL'] ;
 
 $today = "SELECT DATE(NOW()) AS DATE ";
 $query_date = mysql_query($today, $tryconnection) or die(mysql_error()) ;
-$row_date = mysql_fetch_array($query_date) ;
+$row_date = mysqli_fetch_array($query_date) ;
 $date = $row_date['DATE'] ;
 
 if ($autodate < $date ) {
@@ -84,15 +84,15 @@ if ($autodate < $date ) {
 
 $query_WAITING = "SELECT *, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE LOCATION=1 ORDER BY $sortby ASC";
 $WAITING = mysql_query($query_WAITING, $tryconnection) or die(mysql_error());
-$row_WAITING = mysql_fetch_assoc($WAITING);
+$row_WAITING = mysqli_fetch_assoc($WAITING);
 
 $query_ADMITTED = "SELECT *, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE LOCATION=2 ORDER BY $sortby ASC";
 $ADMITTED = mysql_query($query_ADMITTED, $tryconnection) or die(mysql_error());
-$row_ADMITTED = mysql_fetch_assoc($ADMITTED);
+$row_ADMITTED = mysqli_fetch_assoc($ADMITTED);
 
 $query_DISCHARGED = "SELECT *, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE LOCATION=3 ORDER BY $sortby ASC";
 $DISCHARGED = mysql_query($query_DISCHARGED, $tryconnection) or die(mysql_error());
-$row_DISCHARGED = mysql_fetch_assoc($DISCHARGED);
+$row_DISCHARGED = mysqli_fetch_assoc($DISCHARGED);
 
 if (isset($_GET['recepid'])){
 $query_delete="DELETE FROM RECEP WHERE RECEPID=".substr($_GET['recepid'],1);
@@ -452,7 +452,7 @@ echo	'>('.$row_WAITING['AREA1'].')'.$row_WAITING['PH1'].', ('.$row_WAITING['AREA
 
 // end of sign out section.
 	  
-} while ($row_WAITING = mysql_fetch_assoc($WAITING));
+} while ($row_WAITING = mysqli_fetch_assoc($WAITING));
 	  }
 	  ?>
 </table>
@@ -500,7 +500,7 @@ echo	'>('.$row_ADMITTED['AREA1'].')'.$row_ADMITTED['PH1'].', ('.$row_ADMITTED['A
 </tr>';
 
 	  
-} while ($row_ADMITTED = mysql_fetch_assoc($ADMITTED));
+} while ($row_ADMITTED = mysqli_fetch_assoc($ADMITTED));
 	 } 
 	  ?>
 </table>
@@ -548,7 +548,7 @@ echo	'>('.$row_DISCHARGED['AREA1'].')'.$row_DISCHARGED['PH1'].', ('.$row_DISCHAR
 </tr>';
 
 	  
-} while ($row_DISCHARGED = mysql_fetch_assoc($DISCHARGED));
+} while ($row_DISCHARGED = mysqli_fetch_assoc($DISCHARGED));
 	  }
 	  ?>
 </table>

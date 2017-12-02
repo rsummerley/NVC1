@@ -11,7 +11,7 @@ $_SESSION['dischgpetid']=array();
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$_SESSION['client']/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -32,7 +32,7 @@ foreach ($petids2 as $pet){
 
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
 $select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
-$row_MEDNOTE = mysql_fetch_assoc($select_MEDNOTE);
+$row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);
 
 $sumhxcats=2;
 

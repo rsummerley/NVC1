@@ -4,7 +4,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_SECINDEX = sprintf("SELECT * FROM SECINDEX WHERE SECINDEX = '$_GET[secindex]'");
 $SECINDEX = mysql_query($query_SECINDEX, $tryconnection) or die(mysql_error());
-$row_SECINDEX = mysql_fetch_assoc($SECINDEX);
+$row_SECINDEX = mysqli_fetch_assoc($SECINDEX);
 
 if (!empty($_POST['homepha'])){$homeph=$_POST['homepha'].'-'.$_POST['homephb'];}
 if (!empty($_POST['worka'])){$work=$_POST['worka'].'-'.$_POST['workb'];}

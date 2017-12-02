@@ -7,7 +7,7 @@ $minvdte=strtotime($minvdte);
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_TAX = "SELECT HGST, HOGST, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA LIMIT 1";
 $TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
-$row_TAX = mysql_fetch_assoc($TAX);
+$row_TAX = mysqli_fetch_assoc($TAX);
 
 $hgstdate=strtotime($row_TAX['HGSTDATE']);
 
@@ -33,7 +33,7 @@ $minvdte=strtotime($minvdte);
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_TAX = "SELECT HTAXNAME, HOTAXNAME, HGSTNO, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA";
 $TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
-$row_TAX = mysql_fetch_assoc($TAX);
+$row_TAX = mysqli_fetch_assoc($TAX);
 
 $hgstdate=strtotime($row_TAX['HGSTDATE']);
 
@@ -56,7 +56,7 @@ else {echo "help!";}
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_TAX = "SELECT HTAXNAME, HOTAXNAME, HGSTNO, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA";
 $TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
-$row_TAX = mysql_fetch_assoc($TAX);
+$row_TAX = mysqli_fetch_assoc($TAX);
 $minvdte=strtotime($_SESSION['minvdte']);
 
 if (isset($_SESSION['csminvdte'])){

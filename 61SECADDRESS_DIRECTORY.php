@@ -3,7 +3,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_SECADDRESS = "SELECT * FROM SECADDRESS WHERE CUSTNO = '$_GET[client]'";
 $SECADDRESS = mysql_query($query_SECADDRESS, $tryconnection) or die(mysql_error());
-$row_SECADDRESS = mysql_fetch_assoc($SECADDRESS);
+$row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -64,7 +64,7 @@ Second Address</td>
         <td>&nbsp;</td>
         <td><?php echo $row_SECADDRESS['SECNAME']; ?>, <?php echo $row_SECADDRESS['STREET']; ?>, <?php echo $row_SECADDRESS['UNITNO']; ?>, <?php echo $row_SECADDRESS['CITY2']; ?>, <?php echo $row_SECADDRESS['PROV']; ?>, <?php echo $row_SECADDRESS['ZIP2']; ?></td>
     </tr>
-    <?php } while ($row_SECADDRESS = mysql_fetch_assoc($SECADDRESS)); } 
+    <?php } while ($row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS)); } 
 	else {
 	echo "<tr class='Verdana12' height='60' align='center'><td>&nbsp;</td><td>There is no record in the database for this client.<br /> To add new second address please click on ADD button.</td></tr>";
 	}?>
@@ -84,5 +84,5 @@ Second Address</td>
 </body>
 <!-- InstanceEnd --></html>
 <?php 
-mysql_free_result($SECADDRESS);
+mysqli_free_result($SECADDRESS);
 ?>

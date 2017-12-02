@@ -8,7 +8,7 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
 $EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$row_EXAM = mysqli_fetch_assoc($EXAM);
  
 
 if (isset($_POST['save'])){ 

@@ -12,19 +12,19 @@ $bkuptble2 = "EXHOLDBACKUP2";
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE SIGNEDIN='1' ORDER BY DOCTOR ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN='1' ORDER BY STAFF ASC");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
 $select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
-$row_MEDNOTE = mysql_fetch_assoc($select_MEDNOTE);
+$row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);
 
 //create a copy of this patient's record in EXAMHOLD and EXAMHOLD2 to be able to revert the changes.
 if (!isset($_SESSION['soapbackup'])){
@@ -53,13 +53,13 @@ $_SESSION['soapbackup']=1;
 
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient' ";
 $EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$row_EXAM = mysqli_fetch_assoc($EXAM);
 
 
 $query_CATEGORIES = "SELECT DISTINCT TTYPE, TCATGRY FROM EXAMHOLD WHERE CUSTNO = '$client' AND PETNO = '$patient' ORDER BY TCATGRY ASC";
 $CATEGORIES = mysql_query($query_CATEGORIES, $tryconnection) or die(mysql_error());
-$row_CATEGORIES = mysql_fetch_assoc($CATEGORIES);
-$totalRows_CATEGORIES = mysql_num_rows($CATEGORIES);
+$row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES);
+$totalRows_CATEGORIES = mysqli_num_rows($CATEGORIES);
 
 if (isset($_POST['findings'])){
 
@@ -99,7 +99,7 @@ $Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
 
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
 $EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$row_EXAM = mysqli_fetch_assoc($EXAM);
 
 //header("Location:OUT_PATIENT.php");
 }
@@ -132,7 +132,7 @@ else if (isset($_POST['commit'])){
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -351,17 +351,17 @@ mysql_query($insertSQL, $tryconnection) or die(mysql_error());
 
 $query_CATEGORIES = "SELECT DISTINCT TTYPE, TCATGRY FROM EXAMHOLD WHERE CUSTNO = '$client' AND PETNO = '$patient'";
 $CATEGORIES = mysql_query($query_CATEGORIES, $tryconnection) or die(mysql_error());
-$row_CATEGORIES = mysql_fetch_assoc($CATEGORIES);
+$row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES);
 
 //for each category, select the subsystems that are marked
 do { 
 	$query_SUBSYSTEM = "SELECT TCATGRY, TTYPE, TDESCR, TVAR1, TMEMO FROM EXAMHOLD WHERE TCATGRY='$row_CATEGORIES[TCATGRY]' AND PETNO = '$patient' AND TVAR1='1' ORDER BY TCATGRY,TTYPE";
 	$SUBSYSTEM = mysql_query($query_SUBSYSTEM, $tryconnection) or die(mysql_error());
-	$row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM);
+	$row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM);
 	
 	$query_TMEMO = "SELECT TMEMO FROM EXAMHOLD WHERE TCATGRY='$row_CATEGORIES[TCATGRY]' AND TNO=1 AND PETNO = '$patient'";
 	$TMEMO = mysql_query($query_TMEMO, $tryconnection) or die(mysql_error());
-	$row_TMEMO = mysql_fetch_assoc($TMEMO);
+	$row_TMEMO = mysqli_fetch_assoc($TMEMO);
 	
 	//for each market subsystem, create a record in the history
 		do { 
@@ -382,14 +382,14 @@ do {
 
 			//$tcatgry = $row_SUBSYSTEM['TCATGRY'];
 			
-			} while ($row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM));
+			} while ($row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM));
 			
 			if (!empty($tmemo)){
 			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', '::".mysql_real_escape_string($tmemo)."', 2, '58', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
 			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
 			}
 
-} while ($row_CATEGORIES = mysql_fetch_assoc($CATEGORIES));
+} while ($row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES));
 
 
 
@@ -476,7 +476,7 @@ $deleted_MEDNOTE = mysql_query($delete_MEDNOTE, $tryconnection) or die(mysql_err
 
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
 $select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
-$row_MEDNOTE = mysql_fetch_assoc($select_MEDNOTE);
+$row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);
 
 unset($_SESSION['soapbackup']);
 header("Location:../PROCESSING_MENU.php");
@@ -964,7 +964,7 @@ width:auto;
 
 	$query_SUBSYSTEM = "SELECT TVAR1 FROM EXAMHOLD WHERE TCATGRY = '$row_CATEGORIES[TCATGRY]' AND PETNO = '$patient' AND TVAR1='1' LIMIT 1";
 	$SUBSYSTEM = mysql_query($query_SUBSYSTEM, $tryconnection) or die(mysql_error());
-	$row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM);
+	$row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM);
 	if (!empty($row_SUBSYSTEM)) {
 	$tvar1 = 1;
 	}
@@ -974,7 +974,7 @@ width:auto;
 	
 	?>
 	<div style="width:<?php if (strlen($row_CATEGORIES['TTYPE']) == 4) { echo '70';} else {echo '140';} ?>px; float:left;"><label style="white-space:nowrap;" class="<?php if ($tvar1 == 1) {echo 'Verdana11';} else {echo "Verdana11";}?>" onmouseover="CursorToPointer(this.id)">&nbsp;<input type="checkbox" name="subsystem" id="<?php echo $row_CATEGORIES['TCATGRY']; ?>" onclick="opensubsys('<?php echo $row_CATEGORIES['TCATGRY']; ?>','<?php echo $row_PATIENT_CLIENT['CUSTNO']; ?>','<?php echo $row_PATIENT_CLIENT['PETID']; ?>');" <?php if ($tvar1 == 1) {echo "checked";}?>/>&nbsp;<?php echo $row_CATEGORIES['TTYPE']; ?></label></div>
-    <?php } while ($row_CATEGORIES = mysql_fetch_assoc($CATEGORIES)); ?>   </td>
+    <?php } while ($row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES)); ?>   </td>
     </tr>
 </table>    </td>
   </tr>
@@ -1071,10 +1071,10 @@ width:auto;
           <option></option>
           <?php do { ?>
           <option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-          <?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+          <?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
           <?php do { ?>
           <option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
-          <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+          <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
         </select>
     </label></td>
   </tr>

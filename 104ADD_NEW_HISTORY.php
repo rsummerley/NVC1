@@ -18,30 +18,30 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
-$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
+$totalRows_PATIENT_CLIENT = mysqli_num_rows($PATIENT_CLIENT);
 
 $pdob=$row_PATIENT_CLIENT['PDOB'];
 
 $query_HXBUFFER = sprintf("SELECT * FROM HXBUFFER WHERE HXPETID='$patient'");
 $HXBUFFER = mysql_query($query_HXBUFFER, $tryconnection) or die(mysql_error());
-$row_HXBUFFER = mysql_fetch_assoc($HXBUFFER);
+$row_HXBUFFER = mysqli_fetch_assoc($HXBUFFER);
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE SIGNEDIN='1' ORDER BY DOCTOR ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN='1' ORDER BY STAFF ASC");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 $query_HXFILTER = "SELECT * FROM HXFILTER WHERE HXGROUP='1'";
 $HXFILTER = mysql_query($query_HXFILTER, $tryconnection) or die(mysql_error());
-$row_HXFILTER = mysql_fetch_assoc($HXFILTER);
+$row_HXFILTER = mysqli_fetch_assoc($HXFILTER);
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -603,7 +603,7 @@ document.add_history.treatdesc.value='';
 			
 			else if ($row_HXFILTER['HXCNAME']=='Other') {echo "checked";}		
 			echo " />".$row_HXFILTER['HXCNAME']."</label>&nbsp;";
-					} while ($row_HXFILTER = mysql_fetch_assoc($HXFILTER));
+					} while ($row_HXFILTER = mysqli_fetch_assoc($HXFILTER));
 					?>                    </td>
     </tr>
                 <tr height="20" style="white-space:nowrap;">
@@ -615,10 +615,10 @@ document.add_history.treatdesc.value='';
         <option></option>
             <?php do { ?>
 		<option value="<?php echo $row_DOCTOR['DOCTOR']; ?>"><?php echo $row_DOCTOR['DOCTOR']; ?></option>
-<?php } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR)); ?>
+<?php } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR)); ?>
             <?php do { ?>
         <option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
         </select>        </td>
       </tr>
   </table>        </td>

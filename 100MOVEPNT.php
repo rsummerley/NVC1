@@ -36,9 +36,9 @@ if ($xxx = 1 || $xxx = 2)  {
 mysql_select_db($database_tryconnection, $tryconnection);
 $GETNEW = "SELECT PETNO, PETID FROM PETMAST WHERE CUSTNO = '$Tclient'" ;
 $ALLPET = mysql_query($GETNEW, $tryconnection or die(mysql_error()) ;
-$row_NUMPET = mysql_fetch_array($ALLPET,MYSQL_NUM) ;
+$row_NUMPET = mysqli_fetch_array($ALLPET,MYSQLI_NUM) ;
 $NEXTPETNO = 1 ;
-WHILE ($ROW = mysql_fetch_array($row_NUMPET) {
+WHILE ($ROW = mysqli_fetch_array($row_NUMPET) {
   $NEXTPETNO ++ ;
   }
 /*
@@ -73,7 +73,7 @@ and insert it.
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$Oclient/$row_PREFER['TRTMCOUNT'] ;
 $treatmxx="TREATM".floor($treatmxx) ;
@@ -128,7 +128,7 @@ if $xxx = 2 OR $xxx = 3  {
     Now check to ensure there is only one patient on this invoice. If multiples, NO GO.
    */
    $Nohit = 1
-   while ($row = mysql_fetch_array($cur)) {
+   while ($row = mysqli_fetch_array($cur)) {
      if INVMAJ < 87 {
        if $row['INVPET'] != $Opetid {
        $Nohit = 0

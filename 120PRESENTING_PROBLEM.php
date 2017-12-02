@@ -15,7 +15,7 @@ $client=$_GET['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_RECEP = "SELECT *, DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN, DATE_FORMAT(TIME, '%H:%i') AS TIME FROM RECEP WHERE RECEPID='$recepid' OR RFPETID='$patient' ORDER BY DATETIME DESC LIMIT 1";
 $RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 $patient=$row_RECEP['RFPETID'];
 $client=$row_RECEP['CUSTNO'];
@@ -72,7 +72,7 @@ if (isset($_POST['record'])){
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -110,11 +110,11 @@ $treatmxx="TREATM".floor($treatmxx);
 
 $query_STAFF = sprintf("SELECT STAFF, STAFFINIT FROM STAFF WHERE SIGNEDIN=1 ORDER BY STAFF ASC");
 $STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
+$row_STAFF = mysqli_fetch_assoc($STAFF);
 
 $query_Doctor = "SELECT * FROM DOCTOR WHERE SIGNEDIN=1 AND INSTR(DOCTOR,'DVM') <> 0";
 $Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
-$row_Doctor = mysql_fetch_assoc($Doctor);
+$row_Doctor = mysqli_fetch_assoc($Doctor);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/ClientPatientTemplate.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -446,11 +446,11 @@ document.getElementById('maxnum').innerText=chars;
 			<option value="&nbsp;"></option>
 <?php do {  
       echo '<option value="'.$row_Doctor['DOCTOR'].'">'.$row_Doctor['DOCTOR'].'</option>';
-} while ($row_Doctor = mysql_fetch_assoc($Doctor)); ?>
+} while ($row_Doctor = mysqli_fetch_assoc($Doctor)); ?>
 			<?php 
             do { ?>
             <option value="<?php echo $row_STAFF['STAFF']; ?>"><?php echo $row_STAFF['STAFF']; ?></option>
-            <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+            <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
         </select>        </td>
         </tr>
     </table></td>

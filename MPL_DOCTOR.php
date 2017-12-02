@@ -23,7 +23,7 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
 $pdob=$row_PATIENT_CLIENT['PDOB'];
@@ -31,7 +31,7 @@ $psex=$row_PATIENT_CLIENT['PSEX'];
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR ORDER BY DOCTOR ASC");
 $DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
-$row_DOCTOR = mysql_fetch_assoc($DOCTOR);
+$row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 
 if (isset($_POST['check'])){
@@ -271,7 +271,7 @@ document.doctor.submit();
                     ?>
                     <option value="<?php echo $row_DOCTOR['DOCTOR']?>" ><?php echo $row_DOCTOR['DOCTOR']?></option>
                     <?php
-                    } while ($row_DOCTOR = mysql_fetch_assoc($DOCTOR));
+                    } while ($row_DOCTOR = mysqli_fetch_assoc($DOCTOR));
                     ?>
                 </select></td>
                 <td>&nbsp;</td>

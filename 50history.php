@@ -19,7 +19,7 @@ if (!empty($_POST['from']) || !empty($_POST['to'])){
 	
 	$startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 	$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-	$startdate=mysql_fetch_array($startdate);
+	$startdate=mysqli_fetch_array($startdate);
 	
 	if (!empty($_POST['to'])){
 	$enddate=$_POST['to'];
@@ -30,7 +30,7 @@ if (!empty($_POST['from']) || !empty($_POST['to'])){
 	
 	$enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 	$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-	$enddate=mysql_fetch_array($enddate);
+	$enddate=mysqli_fetch_array($enddate);
 $fromto="AND TREATDATE >= '$startdate[0]' AND TREATDATE <= '$enddate[0]'";
 }//if (!empty($_POST['from']) || !empty($_POST['to']))
 
@@ -38,7 +38,7 @@ $fromto="AND TREATDATE >= '$startdate[0]' AND TREATDATE <= '$enddate[0]'";
 ////////////////////////VIEW FROM TREATMXX////////////////////////WHERE PETID='$patient'
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -61,7 +61,7 @@ $VIEWHX= mysql_query($query_VIEWHX, $tryconnection) or $none=1;
 
 $query_HX="SELECT *, DATE_FORMAT(TREATDATE,'%m/%d/%Y') AS TREATDATE,DATE_FORMAT(TREATDATE,'%Y/%m/%d') AS TREATSORT FROM $hxview WHERE PETID='$patient' AND HCAT & '$filter' ".$fromto." ORDER BY TREATSORT, LINENUMBER";
 $HX= mysql_query($query_HX, $tryconnection) or die(mysql_error());
-$row_HX = mysql_fetch_assoc($HX);
+$row_HX = mysqli_fetch_assoc($HX);
 
 if (empty($row_HX)){
 echo "I'm sorry, this client doesn't have any record in the medical history. It's not my fault.";
@@ -431,7 +431,7 @@ echo "</tr>\n";
 						
 
 }
-while ($row_HX = mysql_fetch_assoc($HX));
+while ($row_HX = mysqli_fetch_assoc($HX));
 
 
 

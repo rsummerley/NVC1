@@ -7,7 +7,7 @@ $client=$_GET['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CLIENT = "SELECT CUSTNO, SOURCE, CODE, TERMS, SVC, DATE_FORMAT(LDATE,'%m/%d/%Y') AS LDATE, DATE_FORMAT(LASTPAY,'%m/%d/%Y') AS LASTPAY, DISC, BALANCE, YTDSLS, CREDIT, CVISIT, LASTMON, LASTINT, MEMO FROM ARCUSTO WHERE CUSTNO = '$client' LIMIT 1";
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 //date and time stamp showing the last time the client file - accounting info was modified in any way. It happens at invoicing, and during client file edits
 $adatetime=date("Y-m-d H:i:s");

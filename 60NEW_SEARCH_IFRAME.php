@@ -130,22 +130,22 @@ $_SESSION['invnumber'] = $_GET['invnumber'];
 $invn = $_SESSION['invnumber'];
 $query_INVNO="SELECT CUSTNO FROM ARARECV WHERE INVNO='$invn'";
 $INVNO=mysql_query($query_INVNO, $tryconnection) or die(mysql_error());
-$query_INVNO = mysql_fetch_assoc($INVNO);
-$totalRows_INVNO = mysql_num_rows($INVNO);
+$query_INVNO = mysqli_fetch_assoc($INVNO);
+$totalRows_INVNO = mysqli_num_rows($INVNO);
 	if (empty($query_INVNO['CUSTNO'])){
 	$query_INVNO="SELECT CUSTNO FROM ARINVOI WHERE INVNO='$invn'";
 	$INVNO=mysql_query($query_INVNO, $tryconnection) or die(mysql_error());
-	$query_INVNO = mysql_fetch_assoc($INVNO);
+	$query_INVNO = mysqli_fetch_assoc($INVNO);
 	}
 	if (empty($query_INVNO['CUSTNO'])){
 	$query_INVNO="SELECT CUSTNO FROM INVLAST WHERE INVNO='$invn'";
 	$INVNO=mysql_query($query_INVNO, $tryconnection) or die(mysql_error());
-	$query_INVNO = mysql_fetch_assoc($INVNO);
+	$query_INVNO = mysqli_fetch_assoc($INVNO);
 	}
 	if (empty($query_INVNO['CUSTNO'])){
 	$query_INVNO="SELECT CUSTNO FROM ARYINVO WHERE INVNO='$invn'";
 	$INVNO=mysql_query($query_INVNO, $tryconnection) or die(mysql_error());
-	$query_INVNO = mysql_fetch_assoc($INVNO);
+	$query_INVNO = mysqli_fetch_assoc($INVNO);
 	}
 $custno=$query_INVNO['CUSTNO'];
 }
@@ -162,23 +162,23 @@ $query_CLIENT = "SELECT SQL_CALC_FOUND_ROWS * FROM ARCUSTO ".$joinpet." WHERE AR
 $query_NUMBER="SELECT FOUND_ROWS()";
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
 $NUMBER=mysql_query($query_NUMBER, $tryconnection) or die(mysql_error());
-$row_NUMBER = mysql_fetch_array($NUMBER);
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_NUMBER = mysqli_fetch_array($NUMBER);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 	if (empty($row_CLIENT)){
 	$query_CLIENT = "SELECT CUSTNO FROM SECINDEX WHERE FNAME LIKE '$firstname%' AND LNAME LIKE '$lastname%'";
 	$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-	$row_CLIENT = mysql_fetch_assoc($CLIENT);
+	$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 		if (!empty($row_CLIENT)){
 		$custnos=" OR CUSTNO='".$row_CLIENT['CUSTNO']."'";
-		do { $custnos = $custnos." OR CUSTNO='".$row_CLIENT['CUSTNO']."'"; } while ($row_CLIENT = mysql_fetch_assoc($CLIENT));
+		do { $custnos = $custnos." OR CUSTNO='".$row_CLIENT['CUSTNO']."'"; } while ($row_CLIENT = mysqli_fetch_assoc($CLIENT));
 		$query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO='$row_CLIENT[CUSTNO]'".$custnos;
 		$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-		$row_CLIENT = mysql_fetch_assoc($CLIENT);		
+		$row_CLIENT = mysqli_fetch_assoc($CLIENT);		
 		}
 	}
 	
-$totalRows_CLIENT = mysql_num_rows($CLIENT);
+$totalRows_CLIENT = mysqli_num_rows($CLIENT);
 
 $_SESSION['number']=$row_NUMBER[0];
 
@@ -186,11 +186,11 @@ function listpets($database_tryconnection, $tryconnection, $custno){
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT = sprintf("SELECT * FROM PETMAST WHERE CUSTNO = '%s' AND PDEAD='0' AND PMOVED='0' ORDER BY PETNAME ASC LIMIT 5", $custno);
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 $petsarray=array();
 do {
 $petsarray[]=$row_PATIENT['PETNAME'];
-} while ($row_PATIENT = mysql_fetch_assoc($PATIENT));
+} while ($row_PATIENT = mysqli_fetch_assoc($PATIENT));
 echo implode(", ", $petsarray);
 }
 
@@ -333,7 +333,7 @@ window.open('CLIENT_PATIENT_FILE.php?client=' + client + '&refID='+ refID,'_pare
 	  else if ($_SESSION['display']=='4'){
 		$query_INVOICE = "SELECT INVNO FROM INVHOLD WHERE INVCUST = '".$row_CLIENT['CUSTNO']."' AND INVNO LIKE '".$_GET['invnumber']."%' ORDER BY INVNO ASC LIMIT 1";
 		$INVOICE = mysql_query($query_INVOICE, $tryconnection) or die(mysql_error());
-		$row_INVOICE = mysql_fetch_assoc($INVOICE);
+		$row_INVOICE = mysqli_fetch_assoc($INVOICE);
 	  	echo $row_INVOICE['INVNO'];
 	  }
 	  
@@ -344,7 +344,7 @@ echo '</td>
 echo  '>'.number_format($row_CLIENT['BALANCE'],2).'</span>
       </td>
 	</tr>';
-	} while ($row_CLIENT = mysql_fetch_assoc($CLIENT)); }
+	} while ($row_CLIENT = mysqli_fetch_assoc($CLIENT)); }
 	?>
     
     <tr height="16" valign="middle">

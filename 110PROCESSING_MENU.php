@@ -26,7 +26,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 $treatmxx=$_SESSION['client']/$row_PREFER['TRTMCOUNT'];
 $treatmxx="PHOTO".floor($treatmxx);
 $uploaddir = "$treatmxx"."/";
@@ -35,7 +35,7 @@ $uploadfile = $uploaddir . $_SESSION['patient'].".jpg";
 
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO = '$client' LIMIT 1";
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 $fileused="$row_CLIENT[TITLE] $row_CLIENT[CONTACT] $row_CLIENT[COMPANY]";
 //$_SESSION['fileused']= $fileused;
@@ -45,7 +45,7 @@ $fileused="$row_CLIENT[TITLE] $row_CLIENT[CONTACT] $row_CLIENT[COMPANY]";
 ///////////////////////////////// PATIENT ////////////////////////////////////
 $query_PATIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PDEADATE,'%m/%d/%Y') AS PDEADATE FROM PETMAST WHERE PETID = '$patient' LIMIT 1";
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 $_SESSION['pettype'] = $row_PATIENT['PETTYPE'] ;
 
 function validity($mydate,$interv){
@@ -73,7 +73,7 @@ $datetime=date("Y-m-d H:i:s");
 ////////////////////// PRESENTING PROBLEM ////////////////////////////////
 $query_RECEP = "SELECT RECEPID, PROBLEM, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE RFPETID='$patient' limit 1";
 $RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 ///////////////////////////// COMMENT ////////////////////////////////////////
 
@@ -116,26 +116,26 @@ $custno=$row_CLIENT['CUSTNO'];
 
 $query_SECINDEX = "SELECT * FROM SECINDEX WHERE CUSTNO = '$custno'";
 $SECINDEX = mysql_query($query_SECINDEX, $tryconnection) or die(mysql_error());
-$row_SECINDEX = mysql_fetch_assoc($SECINDEX);
-$totalRows_SECINDEX = mysql_num_rows($SECINDEX);
+$row_SECINDEX = mysqli_fetch_assoc($SECINDEX);
+$totalRows_SECINDEX = mysqli_num_rows($SECINDEX);
 
 $query_SECADDRESS = "SELECT * FROM SECADDRESS WHERE CUSTNO = '$custno'";
 $SECADDRESS = mysql_query($query_SECADDRESS, $tryconnection) or die(mysql_error());
-$row_SECADDRESS = mysql_fetch_assoc($SECADDRESS);
-$totalRows_SECADDRESS = mysql_num_rows($SECADDRESS);
+$row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS);
+$totalRows_SECADDRESS = mysqli_num_rows($SECADDRESS);
 
 //////////////////////////// WEIGHT UNIT FROM CRITDATA /////////////////////////////////////////
 
 $query_CRITDATA = "SELECT CRITDATA.WEIGHTUNIT FROM CRITDATA LIMIT 1";
 $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
-$totalRows_CRITDATA = mysql_num_rows($CRITDATA);
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
+$totalRows_CRITDATA = mysqli_num_rows($CRITDATA);
 
 //////////////////////// MEDNOTES //////////////////////////////
 
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
 $select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
-$row_MEDNOTE = mysql_fetch_assoc($select_MEDNOTE);
+$row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);
 
 if (empty($row_MEDNOTE) && !empty($row_RECEP)) {
 $setup_MEDNOTE = "INSERT INTO MEDNOTES (NCUSTNO,NPET,NDATE,NPROBLEM) VALUES ('$client','$patient', NOW(),'".mysql_real_escape_string($row_RECEP[PROBLEM])."')" ;
@@ -143,28 +143,28 @@ $fill_MEDNOTE = mysql_query($setup_MEDNOTE) or die(mysql_error()) ;
 // and redo the mednote query.
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
 $select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
-$row_MEDNOTE = mysql_fetch_assoc($select_MEDNOTE);}
+$row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);}
 //////////////////////// INVOICE //////////////////////////////
 $query_INVHOLD = "SELECT * FROM INVHOLD WHERE INVCUST='$client' AND (INVDESCR='GST' OR INVDESCR='HST' OR INVDESCR='PST' OR INVDESCR='TOTAL')";
 $INVHOLD = mysql_query($query_INVHOLD, $tryconnection) or die(mysql_error());
-$row_INVHOLD = mysql_fetch_assoc($INVHOLD);
+$row_INVHOLD = mysqli_fetch_assoc($INVHOLD);
 $invhold=array();
 $invhold[]=$row_INVHOLD['INVNO'];
 do {
 $invhold[]=$row_INVHOLD['INVTOT'];
-} while ($row_INVHOLD = mysql_fetch_assoc($INVHOLD));
+} while ($row_INVHOLD = mysqli_fetch_assoc($INVHOLD));
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_DLOG = "SELECT DLPETID FROM TICKLER";
 $DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
-$row_DLOG = mysql_fetch_assoc($DLOG);
+$row_DLOG = mysqli_fetch_assoc($DLOG);
 $DLOGarray=array();
 do {
 $DLOGarray[]=$row_DLOG['DLPETID'];
 }
-while ($row_DLOG = mysql_fetch_assoc($DLOG));
+while ($row_DLOG = mysqli_fetch_assoc($DLOG));
 
 /////////////////////////////PAGING WITHIN CLIENT FILES/////////////////////////
 $query_VIEW="CREATE OR REPLACE VIEW CLIENTS AS SELECT DISTINCT CUSTNO FROM ARCUSTO ORDER BY COMPANY ASC";
@@ -172,13 +172,13 @@ $VIEW= mysql_query($query_VIEW, $tryconnection) or die(mysql_error());
 
 $query_COMPANY="SELECT * FROM CLIENTS";
 $COMPANY= mysql_query($query_COMPANY, $tryconnection) or die(mysql_error());
-$row_COMPANY = mysql_fetch_assoc($COMPANY);
+$row_COMPANY = mysqli_fetch_assoc($COMPANY);
 
 $ids= array();
 do {
 $ids[]=$row_COMPANY['CUSTNO'];
 }
-while ($row_COMPANY = mysql_fetch_assoc($COMPANY));
+while ($row_COMPANY = mysqli_fetch_assoc($COMPANY));
 
 $key=array_search($row_CLIENT['CUSTNO'],$ids);
 
@@ -188,13 +188,13 @@ $VIEWDL= mysql_query($query_VIEWDL, $tryconnection) or die(mysql_error());
 
 $query_DLOG="SELECT * FROM DLOG";
 $DLOG= mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
-$row_DLOG = mysql_fetch_assoc($DLOG);
+$row_DLOG = mysqli_fetch_assoc($DLOG);
 
 $dls= array();
 do {
 $dls[]=$row_DLOG['DLPETID'];
 }
-while ($row_DLOG = mysql_fetch_assoc($DLOG));
+while ($row_DLOG = mysqli_fetch_assoc($DLOG));
 
 
 
@@ -203,15 +203,15 @@ while ($row_DLOG = mysql_fetch_assoc($DLOG));
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_EXAM = "SELECT * FROM REPORTCD WHERE TSPECIES = '$row_PATIENT[PETTYPE]' ORDER BY TCATGRY,TNO";
 $EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
-$totalRows_EXAM = mysql_num_rows($EXAM);
+$row_EXAM = mysqli_fetch_assoc($EXAM);
+$totalRows_EXAM = mysqli_num_rows($EXAM);
 
 if (isset($_POST['exambegin'])){
 
 //check if there is a record in EXAMHOLDs
 $query_EXAMHOLD2 = "SELECT * FROM EXAMHOLD2 WHERE PETNO = $patient";
 $EXAMHOLD2 = mysql_query($query_EXAMHOLD2, $tryconnection) or die(mysql_error());
-$row_EXAMHOLD2 = mysql_fetch_assoc($EXAMHOLD2);
+$row_EXAMHOLD2 = mysqli_fetch_assoc($EXAMHOLD2);
 
 	if (empty($row_EXAMHOLD2)){
 	$insertEX = sprintf("INSERT INTO EXAMHOLD2 (CUSTNO, PETNO, EXAMTIME, TSPECIES) VALUES ('%s', '%s', NOW(), '%s')", mysql_real_escape_string($row_PATIENT['CUSTNO']), $patient, $_GET['ref'], mysql_real_escape_string($row_PATIENT['PETTYPE']));
@@ -528,7 +528,7 @@ function MM_swapImage() { //v3.0
                           <tr class="Verdana11" id="<?php echo $row_SECINDEX['SECINDEX']."a"; ?>" height="8" onmouseover="CursorToPointer(this.id)" <?php if (empty($row_SECINDEX['SECINDEX'])){echo "style='display:none'";} ?>>
                             <td><?php echo $row_SECINDEX['FNAME']; echo " ".$row_SECINDEX['LNAME']; echo ", ".$row_SECINDEX['RELATION']; echo ", ".$row_SECINDEX['ADDRESS']; if ($row_SECINDEX['AUTHORIZED']=="1"){echo ", (Authorized)";}?></td>
                           </tr>
-                          <?php } while ($row_SECINDEX = mysql_fetch_assoc($SECINDEX)); ?>
+                          <?php } while ($row_SECINDEX = mysqli_fetch_assoc($SECINDEX)); ?>
                         </table>
                     </div>
                   </div>
@@ -540,7 +540,7 @@ function MM_swapImage() { //v3.0
                           <tr class="Verdana11" id="<?php echo $row_SECADDRESS['SECADDRESS']."b"; ?>" onmouseover="CursorToPointer(this.id)" height="8" <?php if (empty($row_SECADDRESS['SECADDRESS'])){echo "style='display:none'";} ?>>
                             <td><?php echo $row_SECADDRESS['STREET']; echo ", ".$row_SECADDRESS['UNITNO']; echo ", ".$row_SECADDRESS['CITY2']; echo ", ".$row_SECADDRESS['PROV']; echo ", ".$row_SECADDRESS['ZIP2']; if ($row_SECADDRESS['LEGAL']=="1"){echo ", (Legal address)";}?></td>
                           </tr>
-                          <?php } while ($row_SECADDRESS = mysql_fetch_assoc($SECADDRESS)); ?>
+                          <?php } while ($row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS)); ?>
                       </table>
                     </div>
                   </div>
@@ -554,7 +554,7 @@ function MM_swapImage() { //v3.0
 									  	$refvet=explode(',',$row_CLIENT['REFVET']);
 										$query_REFERRAL = "SELECT * FROM REFER WHERE REFVET='".mysql_real_escape_string($refvet[0])."' AND REFCLIN='".mysql_real_escape_string($row_CLIENT['REFCLIN'])."'";
 										$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
-										$row_REFERRAL = mysql_fetch_assoc($REFERRAL);
+										$row_REFERRAL = mysqli_fetch_assoc($REFERRAL);
 
 									  
 									  echo $row_CLIENT['REFVET'].", ".$row_CLIENT['REFCLIN']."<br />";

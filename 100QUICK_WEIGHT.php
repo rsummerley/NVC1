@@ -13,7 +13,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_PATIENT = "SELECT PWEIGHT FROM PETMAST WHERE PETID = '$patient'";
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 
 if (isset($_POST['save'])){

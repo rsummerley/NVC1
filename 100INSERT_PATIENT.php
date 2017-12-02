@@ -22,34 +22,34 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO = '$client'";
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 $query_BREED = "SELECT * FROM PETBREED WHERE PETBREED.BSPECIES = '$_GET[species]' ORDER BY PETBREED.BREED";
 $BREED = mysql_query($query_BREED, $tryconnection) or die(mysql_error());
-$row_BREED = mysql_fetch_assoc($BREED);
+$row_BREED = mysqli_fetch_assoc($BREED);
 
 
 $query_COLOUR = "SELECT * FROM PETCOLOR WHERE PETCOLOR.CSPECIES = '$_GET[species]' ORDER BY PETCOLOR.COLOUR";
 $COLOUR = mysql_query($query_COLOUR, $tryconnection) or die(mysql_error());
-$row_COLOUR = mysql_fetch_assoc($COLOUR);
+$row_COLOUR = mysqli_fetch_assoc($COLOUR);
 
 $query_CLIENT = "SELECT CUSTNO, TITLE, CONTACT, COMPANY FROM ARCUSTO WHERE CUSTNO = '$client'";
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 $query_PATIENT = "SELECT *, DATE_FORMAT(PDOB, '%m/%d/%Y') AS PDOB, DATE_FORMAT(PDEADATE,'%m/%d/%Y') AS PDEADATE, DATE_FORMAT(PFIRSTDATE,'%m/%d/%Y') AS PFIRSTDATE, DATE_FORMAT(PLASTDATE,'%m/%d/%Y') AS PLASTDATE FROM PETMAST WHERE PETID = '$patient'";
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $query_PETNO = "SELECT PETNO FROM PETMAST WHERE CUSTNO='$client' ORDER BY PETNO DESC LIMIT 1";
 $PETNO = mysql_query($query_PETNO, $tryconnection) or die(mysql_error());
-$row_PETNO = mysql_fetch_assoc($PETNO);
+$row_PETNO = mysqli_fetch_assoc($PETNO);
 
 $species=$row_PATIENT['PETTYPE'];
 $query_LIFESTYLE = "SELECT * FROM PETLIFESTYLE WHERE LSPECIES='$species' ORDER BY LIFESTYLE";
 $LIFESTYLE = mysql_query($query_LIFESTYLE, $tryconnection) or die(mysql_error());
-$row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE);
-$totalRows_LIFESTYLE = mysql_num_rows($LIFESTYLE);
+$row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE);
+$totalRows_LIFESTYLE = mysqli_num_rows($LIFESTYLE);
 
 
 //////////ADD THE ITEMS DELETED FOR ONLDLOG - SUCH AS FELHW, SOSP, MOVED ETC...
@@ -727,7 +727,7 @@ return valid;
 								 <option <?php if ($row_PATIENT['PETID']!=='0'){echo "value='".$row_PATIENT['PETBREED']."' selected='selected'";}?> ><?php echo $row_PATIENT['PETBREED']; ?></option>
 								 <?php do { ?>
 								 <option value="<?php echo $row_BREED['BREED']; ?>"><?php echo $row_BREED['BREED']; ?></option>
-								 <?php } while ($row_BREED = mysql_fetch_assoc($BREED)); ?>
+								 <?php } while ($row_BREED = mysqli_fetch_assoc($BREED)); ?>
 								</select></td>
            				  </tr>
             				<tr height="30">
@@ -774,7 +774,7 @@ return valid;
 								 <option <?php if ($row_PATIENT['PETID']!=='0'){echo "value='".$row_PATIENT['PCOLOUR']."' selected='selected'";}?> ><?php echo $row_PATIENT['PCOLOUR']; ?></option>
 								 <?php do { ?>
 								 <option value="<?php echo $row_COLOUR['COLOUR']; ?>"><?php echo $row_COLOUR['COLOUR']; ?></option>
-								 <?php } while ($row_COLOUR = mysql_fetch_assoc($COLOUR)); ?>
+								 <?php } while ($row_COLOUR = mysqli_fetch_assoc($COLOUR)); ?>
 								</select>			  					</td>
 	      					</tr>
             				<tr height="30">
@@ -876,7 +876,7 @@ return valid;
                 if (in_array($row_LIFESTYLE['LIFESTYLEID'], $life))
                 {$alife[]=$row_LIFESTYLE['LIFESTYLE'];}
                 }
-                while ($row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE));
+                while ($row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE));
 				echo implode(', ', $alife);		 
 				?>        </td>
       <td width="1" height="31"></td>

@@ -8,18 +8,18 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT = sprintf("SELECT PLIFE, PETTYPE FROM PETMAST WHERE PETMAST.PETID = %s", $patient);
 $PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
 $EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$row_EXAM = mysqli_fetch_assoc($EXAM);
  
 $species=$row_PATIENT['PETTYPE'];
 
 $query_LIFESTYLE = "SELECT * FROM PETLIFESTYLE WHERE LSPECIES='$species' ORDER BY LIFESTYLE";
 $LIFESTYLE = mysql_query($query_LIFESTYLE, $tryconnection) or die(mysql_error());
-$row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE);
-$totalRows_LIFESTYLE = mysql_num_rows($LIFESTYLE);
+$row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE);
+$totalRows_LIFESTYLE = mysqli_num_rows($LIFESTYLE);
 
 $plife=0;
 if (isset($_POST['save'])){
@@ -101,7 +101,7 @@ if (winclosed != 1){
           <?php echo $row_LIFESTYLE['LIFESTYLE']; ?></label> </td>
       </tr>
               
-              <?php } while ($row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE)); ?>
+              <?php } while ($row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE)); ?>
   </table>
     </div>  </td>
   </tr>  

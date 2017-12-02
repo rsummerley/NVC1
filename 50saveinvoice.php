@@ -29,11 +29,11 @@ $npfee='X';
 
 $query_CRITDATA = "SELECT HGSTNO FROM CRITDATA LIMIT 1";
 $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_invdatetime="SELECT STR_TO_DATE('$_SESSION[csminvdte]','%m/%d/%Y')";
 $invdatetime= mysql_unbuffered_query($query_invdatetime, $tryconnection) or die(mysql_error());
-$row_invdatetime=mysql_fetch_array($invdatetime);
+$row_invdatetime=mysqli_fetch_array($invdatetime);
 
 // here is where the transaction starts for InnoDB purposes.
 BEGIN ;
@@ -61,7 +61,7 @@ $result=mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[csminvno] '" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 //ARINVOI - stores finished invoices
@@ -372,11 +372,11 @@ if (isset($_POST['save']) || isset($_POST['prtsave'])){
 
 	$query_CRITDATA = "SELECT HGSTNO FROM CRITDATA LIMIT 1";
 	$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-	$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+	$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 	
 	$query_invdatetime="SELECT STR_TO_DATE('$_SESSION[minvdte]','%m/%d/%Y')";
 	$invdatetime= mysql_query($query_invdatetime, $tryconnection) or die(mysql_error());
-	$row_invdatetime=mysql_fetch_array($invdatetime);
+	$row_invdatetime=mysqli_fetch_array($invdatetime);
 
 
 
@@ -387,7 +387,7 @@ $discount = 0;
 
            $chkdup = "SELECT INVNO,UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno] '" ;
            $get_dup = mysql_query($chkdup, $tryconnection) or die(mysql_error()) ;
-           $row_dup = mysql_fetch_assoc($get_dup) ;
+           $row_dup = mysqli_fetch_assoc($get_dup) ;
 
 
 /******************CASE 1******************/
@@ -442,7 +442,7 @@ BEGIN ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
        
              $petname = mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME']);
@@ -533,7 +533,7 @@ BEGIN ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -616,7 +616,7 @@ BEGIN ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -733,7 +733,7 @@ $cashback = array_sum($_SESSION['payments']) ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -800,7 +800,7 @@ BEGIN ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -885,7 +885,7 @@ BEGIN;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]'" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -950,7 +950,7 @@ BEGIN ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -1031,7 +1031,7 @@ BEGIN ;
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]'" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 		     
  $remainingpayment = array_sum($_SESSION['payments']);
@@ -1124,7 +1124,7 @@ BEGIN ;
 			
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 		     
  $remainingpayment = array_sum($_SESSION['payments']);
@@ -1214,7 +1214,7 @@ BEGIN ;
 			
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 		     
             $remainingpayment = array_sum($_SESSION['payments']);
@@ -1281,7 +1281,7 @@ else if (array_sum($_SESSION['payments']) == 0){
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno] '" ;
 		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
-		     $row_ARFORIN = mysql_fetch_assoc($FOR_INVOICE) ;
+		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
 			//ARINVOI
@@ -1318,11 +1318,11 @@ else if (array_sum($_SESSION['payments']) == 0){
            
 $query_AR = "SELECT SUM(IBAL) AS BALANCE FROM ARARECV WHERE CUSTNO = '$_SESSION[client]' AND IBAL > 0 " ;
 $ISAR = mysql_query($query_AR, $tryconnection) or die(mysql_error()) ;
-$row_balance = mysql_fetch_assoc($ISAR) ;
+$row_balance = mysqli_fetch_assoc($ISAR) ;
 $balance=$row_balance['BALANCE'] ;
 $query_CRED="SELECT CREDIT FROM ARCUSTO WHERE CUSTNO = '$_SESSION[client]' LIMIT 1" ;
 $ISCRED = mysql_query($query_CRED, $tryconnection) or die(mysql_error()) ;
-$row_credit = mysql_fetch_assoc($ISCRED) ;
+$row_credit = mysqli_fetch_assoc($ISCRED) ;
 $credit=$row_credit['CREDIT'] ;
 
 
@@ -1334,7 +1334,7 @@ $credit=$row_credit['CREDIT'] ;
 		  $refno = 'DEP.AP.' ;
 		  $query_ARARECV2="SELECT * FROM ARARECV WHERE CUSTNO='$_SESSION[client]' AND IBAL > 0 ORDER BY INVDTE, UNIQUE1 ASC";
 				$ARARECV2=mysql_query($query_ARARECV2, $tryconnection) or die(mysql_error());
-				$row_ARARECV2=mysql_fetch_assoc($ARARECV2);
+				$row_ARARECV2=mysqli_fetch_assoc($ARARECV2);
 // and AUTOPAY
 				do {
 					
@@ -1382,7 +1382,7 @@ $credit=$row_credit['CREDIT'] ;
 					$remainingpayment=$remainingpayment - $amtpaid;
 
 					}//if ($amtpaid > 0){
-				} while ($row_ARARECV2=mysql_fetch_assoc($ARARECV2) );
+				} while ($row_ARARECV2=mysqli_fetch_assoc($ARARECV2) );
 			
 			
 			$update_ARCUSTO = "UPDATE ARCUSTO SET CREDIT='$remainingpayment' WHERE CUSTNO='$_SESSION[client]' LIMIT 1 ";
@@ -1791,7 +1791,7 @@ COMMIT ;
 ///////////////////////////////////HISTORY/////////////////////////////////////////////////////
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
 $PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$_SESSION['client']/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -1893,7 +1893,7 @@ $subtotalcomment=array();
 	if ($pet > 0) {
 		$query_PETHOLD = "SELECT * FROM PETHOLD WHERE PHPETID=$pet AND MEDINV='1'";
 		$PETHOLD = mysql_query($query_PETHOLD, $tryconnection) or die(mysql_error());
-		$row_PETHOLD = mysql_fetch_assoc($PETHOLD);
+		$row_PETHOLD = mysqli_fetch_assoc($PETHOLD);
 			if (!empty($row_PETHOLD['SUBTCOM'])){
 			$splitasterisks=explode('*',$row_PETHOLD['SUBTCOM']);
 			foreach ($splitasterisks as $splitcomment){

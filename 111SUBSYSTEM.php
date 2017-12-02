@@ -9,12 +9,12 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_SUBSYSTEM = "SELECT UCASE(TTYPE) AS TTYPE, TDESCR, TCATGRY, TNO, TID, TVAR1 FROM EXAMHOLD WHERE TCATGRY = '$_GET[category]' AND CUSTNO = '$client' AND PETNO = '$patient' ORDER BY TCATGRY, TNO";
 $SUBSYSTEM = mysql_query($query_SUBSYSTEM, $tryconnection) or die(mysql_error());
-$row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM);
-$totalRows_SUBSYSTEM = mysql_num_rows($SUBSYSTEM);
+$row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM);
+$totalRows_SUBSYSTEM = mysqli_num_rows($SUBSYSTEM);
 
 $query_MEMO = "SELECT TMEMO FROM EXAMHOLD WHERE TCATGRY = '$_GET[category]' AND TNO = '1' AND PETNO = '$patient'";
 $MEMO = mysql_query($query_MEMO, $tryconnection) or die(mysql_error());
-$row_MEMO = mysql_fetch_assoc($MEMO);
+$row_MEMO = mysqli_fetch_assoc($MEMO);
 
 
 if (isset($_POST['check'])){ 
@@ -122,7 +122,7 @@ function marksubsys(x,y){
     </td>
     </tr>
    
-   <?php } while ($row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM)); ?> 
+   <?php } while ($row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM)); ?> 
  
   <tr>
     <td height="5" class="Labels"></td>

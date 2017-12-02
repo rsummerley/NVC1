@@ -15,7 +15,7 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CLIENT = sprintf("SELECT CUSTNO, SOURCE, CODE, TERMS, SVC, DISC, CVISIT, PTAX, GTAX, LOCKED FROM ARCUSTO WHERE CUSTNO = '$client' LIMIT 1");
 $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 if (isset($_POST['save'])) {
 $updateSQL = sprintf("UPDATE ARCUSTO SET SOURCE='%s', CODE='%s', TERMS='%s', SVC='%s', DISC='%s', CVISIT='%s', PTAX='%s', GTAX='%s', ADATETIME='%s', LOCKED='%s' WHERE CUSTNO='$client' LIMIT 1",

@@ -37,11 +37,11 @@ $client=$_SESSION['client'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
 $PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $query_WEIGHTUNIT = "SELECT WEIGHTUNIT FROM CRITDATA LIMIT 1";
 $WEIGHTUNIT = mysql_query($query_WEIGHTUNIT, $tryconnection) or die(mysql_error());
-$row_WEIGHTUNIT = mysql_fetch_assoc($WEIGHTUNIT);
+$row_WEIGHTUNIT = mysqli_fetch_assoc($WEIGHTUNIT);
 
 
 
