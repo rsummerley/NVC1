@@ -5,17 +5,17 @@ require_once('../../../tryconnection.php');
 $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
-$EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$EXAM = mysqli_query($tryconnection, $query_EXAM) or die(mysqli_error($mysqli_link));
+$row_EXAM = mysqli_fetch_assoc($EXAM);
  
 
 if (isset($_POST['save'])){ 
 $updateSQL = sprintf("UPDATE EXAMHOLD2 SET CLIENTEDMEMO = '%s' WHERE PETNO = '$patient'", 
-				mysql_real_escape_string($_POST['clientedmemo'])
+				mysqli_real_escape_string($mysqli_link, $_POST['clientedmemo'])
 				);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 $closewin="opener.document.location.reload(); self.close();";
 }
 

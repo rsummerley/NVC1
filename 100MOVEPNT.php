@@ -33,12 +33,12 @@ The input screens ask for which case to execute. The resulting value is stored i
 */
 if ($xxx = 1 || $xxx = 2)  {
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $GETNEW = "SELECT PETNO, PETID FROM PETMAST WHERE CUSTNO = '$Tclient'" ;
-$ALLPET = mysql_query($GETNEW, $tryconnection or die(mysql_error()) ;
-$row_NUMPET = mysql_fetch_array($ALLPET,MYSQL_NUM) ;
+$ALLPET = mysqli_query(, $GETNEW, $tryconnection or die(mysqli_error($mysqli_link)) ;
+$row_NUMPET = mysqli_fetch_array($ALLPET,MYSQLI_NUM) ;
 $NEXTPETNO = 1 ;
-WHILE ($ROW = mysql_fetch_array($row_NUMPET) {
+WHILE ($ROW = mysqli_fetch_array($row_NUMPET) {
   $NEXTPETNO ++ ;
   }
 /*
@@ -46,21 +46,21 @@ WHILE ($ROW = mysql_fetch_array($row_NUMPET) {
   Finally, retrieve the last PETID from the new entry to use in the Hx.
 */
 $Move1 = "DROP TEMPORARY TABLE if EXISTS MOVEPAT" ;
-$do1 = mysql_query($Move1, $tryconnection) or die(mysql_error) ;
+$do1 = mysqli_query($tryconnection, $Move1) or die(mysql_error) ;
 $Move2 = "CREATE TEMPORARY TABLE MOVEPAT LIKE PETMAST" ;
-$do1 = mysql_query($Move2, $tryconnection) or die(mysql_error) ;
+$do1 = mysqli_query($tryconnection, $Move2) or die(mysql_error) ;
 $NEWPAT = "INSERT INTO MOVEPAT SELECT * FROM PETMAST WHERE PETID = '$Opetid'" ;
-$do3 = mysql_query($NEWPAT,$tryconnection) or die(mysql_error) ;
+$do3 = mysqli_query($tryconnection, $NEWPAT) or die(mysql_error) ;
 $OLDCLIENT = 'SELECT CUSTNO FROM MOVEPAT'
 /* The following may be redundant, if the opening code has already defined it.
 */
-$Oclient = mysql_query($OLDCLIENT, $tryconnection) or die(mysql_error) ;
-$DATAIS = mysql_query($NEWPAT, $tryconnection) or die(mysql_error()) 
+$Oclient = mysqli_query($tryconnection, $OLDCLIENT) or die(mysql_error) ;
+$DATAIS = mysqli_query($tryconnection, $NEWPAT) or die(mysqli_error($mysqli_link)) 
 UPDATE MOVEPAT SET CUSTNO = '$Tclient', PETNO = '$NEXTPETNO' ;
 INSERT INTO PETMAST SELECT * FROM MOVEPAT ;
 DROP TEMPORARY TABLE MOVEPAT ;
 $NEXTID = "SELECT PETID FROM PETMAST WHERE CUSTNO = '$Tclient' .AND. PETNO = '$NEXTPETNO'" ;
-$NEWID = mysql_query($NEXTID, $tryconnection) or die(mysql_error) ;
+$NEWID = mysqli_query($tryconnection, $NEXTID) or die(mysql_error) ;
 
 }
 
@@ -72,8 +72,8 @@ and insert it.
 */
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-$PREFER= mysql_query($query_PREFER, $tryconnection or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$PREFER= mysqli_query(, $query_PREFER, $tryconnection or die(mysqli_error($mysqli_link));
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$Oclient/$row_PREFER['TRTMCOUNT'] ;
 $treatmxx="TREATM".floor($treatmxx) ;
@@ -81,7 +81,7 @@ $treatmxx="TREATM".floor($treatmxx) ;
 DROP TEMPORARY TABLE if EXISTS MOVEHX ;
 CREATE TEMPORARY TABLE MOVEHX LIKE $treatmxx ;
 $SELECTHX = "INSERT INTO MOVEHX SELECT * FROM $treatmxx WHERE PETID = '$Opetid'" ;
-$NEWHX = mysql_query($SELECTHX, tryconnection or die(mysql_error()) ;
+$NEWHX = mysqli_query(, $SELECTHX, tryconnection or die(mysqli_error($mysqli_link)) ;
 
 UPDATE MOVEHX SET PETID = $NEWID WHERE CUSTNO < 10000000 ;
 UPDATE MOVEHX SET CUSTNO = $Tclient WHERE CUSTNO < 10000000 ;
@@ -91,7 +91,7 @@ $treatmxx = $Tclient/$row_PREFER['TRTMCOUNT'] ;
 $treatmxx = "treatm".floor($treatmxx) ;
 
 $PASTEHX = "INSERT INTO $treatmxx SELECT * FROM MOVEHX" ;
-$FINALLY = mysql_query($PASTEHX, $tryconnection or die(mysql_error()) ;
+$FINALLY = mysqli_query(, $PASTEHX, $tryconnection or die(mysqli_error($mysqli_link)) ;
 
 DROP TEMPORARY TABLE MOVEHX ;
 
@@ -110,13 +110,13 @@ if $xxx = 2 OR $xxx = 3  {
      only one patient on it. Skip over the Administrative items - Taxes, cancels, etc.
   */
   $Qcur = "SELECT INVPET,INVMAJ FROM DVMINV WHERE INVCUST = $client AND INVNO = $invno ";
-  $cur = mysql_query($Qcur, $tryconnection or die(mysql_error()) ;
+  $cur = mysqli_query(, $Qcur, $tryconnection or die(mysqli_error($mysqli_link)) ;
    if $cur != 0 {
      $Lcur = "SELECT INVPET,INVMAJ FROM DVMILAST WHERE INVCUST = $client AND INVNO = $invno ";
-     $cur = mysql_query($Lcur,$tryconnection or die(mysql_error() )
+     $cur = mysqli_query(, $Lcur,$tryconnection or die(mysqli_error($mysqli_link) )
       if $cur != 0 {
         $Ycur = "SELECT INVPET,INVMAJ FROM ARYDVMI WHERE INVCUST = $client AND INVNO = $invno ";
-        $cur = mysql_query($Ycur,$tryconnection or die(mysql_error()) ;
+        $cur = mysqli_query(, $Ycur,$tryconnection or die(mysqli_error($mysqli_link)) ;
         if $cur != 0 {
         /*  At this point, the invoice details do not exist, so tell the operator it can't be done,
             and try another number.
@@ -128,7 +128,7 @@ if $xxx = 2 OR $xxx = 3  {
     Now check to ensure there is only one patient on this invoice. If multiples, NO GO.
    */
    $Nohit = 1
-   while ($row = mysql_fetch_array($cur)) {
+   while ($row = mysqli_fetch_array($cur)) {
      if INVMAJ < 87 {
        if $row['INVPET'] != $Opetid {
        $Nohit = 0

@@ -6,15 +6,15 @@ $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
  
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CATEGORIES = "SELECT DISTINCT TTYPE, TCATGRY FROM EXAMHOLD WHERE PETNO = '$patient' ORDER BY TCATGRY";
-$CATEGORIES = mysql_query($query_CATEGORIES, $tryconnection) or die(mysql_error());
-$row_CATEGORIES = mysql_fetch_assoc($CATEGORIES);
-$totalRows_CATEGORIES = mysql_num_rows($CATEGORIES);
+$CATEGORIES = mysqli_query($tryconnection, $query_CATEGORIES) or die(mysqli_error($mysqli_link));
+$row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES);
+$totalRows_CATEGORIES = mysqli_num_rows($CATEGORIES);
 
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
-$EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$EXAM = mysqli_query($tryconnection, $query_EXAM) or die(mysqli_error($mysqli_link));
+$row_EXAM = mysqli_fetch_assoc($EXAM);
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -91,12 +91,12 @@ subsystem=window.open('SUBSYSTEM.php?category=' + tcatgry + '&client=' + custno 
 	do { 
 	
 	$query_SUBSYSTEM = "SELECT TVAR1, TDESCR FROM EXAMHOLD WHERE TCATGRY = '$row_CATEGORIES[TCATGRY]' AND PETNO = '$patient' AND TVAR1='1' ";
-	$SUBSYSTEM = mysql_query($query_SUBSYSTEM, $tryconnection) or die(mysql_error());
-	$row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM);
+	$SUBSYSTEM = mysqli_query($tryconnection, $query_SUBSYSTEM) or die(mysqli_error($mysqli_link));
+	$row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM);
 
 	$query_TMEMO = "SELECT TMEMO FROM EXAMHOLD WHERE TCATGRY = '$row_CATEGORIES[TCATGRY]' AND TNO = '1' AND PETNO = '$patient'";
-	$TMEMO = mysql_query($query_TMEMO, $tryconnection) or die(mysql_error());
-	$row_TMEMO = mysql_fetch_assoc($TMEMO);
+	$TMEMO = mysqli_query($tryconnection, $query_TMEMO) or die(mysqli_error($mysqli_link));
+	$row_TMEMO = mysqli_fetch_assoc($TMEMO);
 
 	if (!empty($row_SUBSYSTEM)) {
 	$tvar1 = 1;
@@ -115,12 +115,12 @@ subsystem=window.open('SUBSYSTEM.php?category=' + tcatgry + '&client=' + custno 
     
     </td>
     <td height="25" align="left">
-    <div style="height:25px; width:450px; overflow:auto;"><?php do { echo $row_SUBSYSTEM['TDESCR']." &nbsp;"; } while ($row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM)); ?><br  />
+    <div style="height:25px; width:450px; overflow:auto;"><?php do { echo $row_SUBSYSTEM['TDESCR']." &nbsp;"; } while ($row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM)); ?><br  />
 	<?php if (!empty($row_TMEMO['TMEMO'])) {echo "&bull;".$row_TMEMO['TMEMO'];} ?></div>
     </td>
     
   </tr>
-    <?php } while ($row_CATEGORIES = mysql_fetch_assoc($CATEGORIES)); ?>   </td>
+    <?php } while ($row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES)); ?>   </td>
   <tr>
     <td height="20" class="Labels"></td>
     <td class="Labels"><span id="petra"></span>

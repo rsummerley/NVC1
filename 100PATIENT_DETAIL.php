@@ -12,28 +12,28 @@ $patient=$_SESSION['patient'];
 }
 unset($_SESSION['certificate']);
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PDEADATE,'%m/%d/%Y') AS PDEADATE, DATE_FORMAT(PRABDAT,'%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT,'%m/%d/%Y') AS POTHDAT, DATE_FORMAT(PLEUKDAT,'%m/%d/%Y') AS PLEUKDAT, DATE_FORMAT(POTHTWO,'%m/%d/%Y') AS POTHTWO, DATE_FORMAT(POTHTHR,'%m/%d/%Y') AS POTHTHR, DATE_FORMAT(POTHFOR,'%m/%d/%Y') AS POTHFOR, DATE_FORMAT(POTHFIV,'%m/%d/%Y') AS POTHFIV, DATE_FORMAT(POTHSIX,'%m/%d/%Y') AS POTHSIX, DATE_FORMAT(POTHSEV,'%m/%d/%Y') AS POTHSEV, DATE_FORMAT(POTH8,'%m/%d/%Y') AS POTH8, DATE_FORMAT(POTH9,'%m/%d/%Y') AS POTH9, DATE_FORMAT(POTH10,'%m/%d/%Y') AS POTH10, DATE_FORMAT(POTH11,'%m/%d/%Y') AS POTH11, DATE_FORMAT(POTH12,'%m/%d/%Y') AS POTH12, DATE_FORMAT(POTH13,'%m/%d/%Y') AS POTH13, DATE_FORMAT(POTH14,'%m/%d/%Y') AS POTH14, DATE_FORMAT(POTH15,'%m/%d/%Y') AS POTH15, DATE_FORMAT(PFIRSTDATE,'%m/%d/%Y') AS PFIRSTDATE, DATE_FORMAT(PLASTDATE,'%m/%d/%Y') AS PLASTDATE FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
-$PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$PATIENT = mysqli_query($tryconnection, $query_PATIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $species=$row_PATIENT['PETTYPE'];
 $query_LIFESTYLE = "SELECT * FROM PETLIFESTYLE WHERE LSPECIES='$species' ORDER BY LIFESTYLE";
-$LIFESTYLE = mysql_query($query_LIFESTYLE, $tryconnection) or die(mysql_error());
-$row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE);
+$LIFESTYLE = mysqli_query($tryconnection, $query_LIFESTYLE) or die(mysqli_error($mysqli_link));
+$row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE);
 
 $query_VIEW="CREATE OR REPLACE VIEW PATIENTS AS SELECT PETNAME, PETID FROM PETMAST WHERE CUSTNO='$_SESSION[client]' ORDER BY PETNAME ASC";
-$VIEW= mysql_query($query_VIEW, $tryconnection) or die(mysql_error());
+$VIEW= mysqli_query($tryconnection, $query_VIEW) or die(mysqli_error($mysqli_link));
 
 $query_PETNAME="SELECT * FROM PATIENTS";
-$PETNAME= mysql_query($query_PETNAME, $tryconnection) or die(mysql_error());
-$row_PETNAME = mysql_fetch_assoc($PETNAME);
+$PETNAME= mysqli_query($tryconnection, $query_PETNAME) or die(mysqli_error($mysqli_link));
+$row_PETNAME = mysqli_fetch_assoc($PETNAME);
 
 $ids= array();
 do {
 $ids[]=$row_PETNAME['PETID'];
 }
-while ($row_PETNAME = mysql_fetch_assoc($PETNAME));
+while ($row_PETNAME = mysqli_fetch_assoc($PETNAME));
 
 $key=array_search($row_PATIENT['PETID'],$ids);
 
@@ -64,7 +64,7 @@ function validity($mydate,$interv){
 }
 
 $next_APP = "SELECT SHORTDOC,DATE_FORMAT(DATEOF,'%a %b %d %Y') AS DATEOF,TIMEOF,PROBLEM,CANCELLED FROM APPTS WHERE DATEOF >= substr(NOW(),1,10) AND PETID = '$patient'  LIMIT 4" ;
-$get_APP = mysql_query($next_APP, $tryconnection) or die(mysql_error()) ;
+$get_APP = mysqli_query($tryconnection, $next_APP) or die(mysqli_error($mysqli_link)) ;
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -226,7 +226,7 @@ function MM_swapImage() { //v3.0
                 if (in_array($row_LIFESTYLE['LIFESTYLEID'], $life))
                 {$alife[]=$row_LIFESTYLE['LIFESTYLE'];}
                 }
-                while ($row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE));
+                while ($row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE));
 				echo implode(', ', $alife);
                 ?>            </td>
           </tr>
@@ -266,7 +266,7 @@ function MM_swapImage() { //v3.0
           </tr>
           </table>        </td>
       </tr>
-    <?php while ($row_APP = mysql_fetch_array($get_APP)) {echo '<tr> 
+    <?php while ($row_APP = mysqli_fetch_array($get_APP)) {echo '<tr> 
     <td class="Verdana11">';  if($row_APP['CANCELLED'] == 1 ){$canc = ' CANCELLED';} else {$canc = '' ;} if (substr($row_APP['TIMEOF'],0,2) > '12') {echo 'Next Apt. on ' . $row_APP['DATEOF']. ' at '.(substr($row_APP['TIMEOF'],0,2)-12) .substr($row_APP['TIMEOF'],2,3) . ' with '  . $row_APP['SHORTDOC'] . '  for ' . $row_APP['PROBLEM'].$canc;} else {echo 'Next Apt. on ' . $row_APP['DATEOF']. ' at '.$row_APP['TIMEOF'] . ' with '  . $row_APP['SHORTDOC'] . '  for ' . $row_APP['PROBLEM'] . $canc ;} 
     echo '</td>
     </tr>'; }?>

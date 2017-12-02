@@ -76,8 +76,8 @@ font-family:Arial, Helvetica, sans-serif;
   <tr>
     <td align="left" class="Verdana15">Admit: <?php 
 	$query_RECEP = "SELECT DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN FROM RECEP WHERE RFPETID = '$_SESSION[patient]'";
-	$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-	$row_RECEP = mysql_fetch_assoc($RECEP);
+	$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
+	$row_RECEP = mysqli_fetch_assoc($RECEP);
 	echo $row_RECEP['DATEIN'];
 	 ?>    </td>
   </tr>

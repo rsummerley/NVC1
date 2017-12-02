@@ -7,26 +7,26 @@ if (isset($_GET['refID'])){
 $table=DOCTOR;
 $order=DOCTOR;
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_ORIGINALD = "SELECT PERSONID, SIGNEDIN, PRIORITY FROM DOCTOR ORDER BY PRIORITY";
-$ORIGINALD = mysql_query($query_ORIGINALD, $tryconnection) or die(mysql_error());
-$row_ORIGINALD = mysql_fetch_assoc($ORIGINALD);
+$ORIGINALD = mysqli_query($tryconnection, $query_ORIGINALD) or die(mysqli_error($mysqli_link));
+$row_ORIGINALD = mysqli_fetch_assoc($ORIGINALD);
 
 $query_ORIGINALS = "SELECT PERSONID, SIGNEDIN,PRIORITY FROM STAFF ORDER BY PRIORITY";
-$ORIGINALS = mysql_query($query_ORIGINALS, $tryconnection) or die(mysql_error());
-$row_ORIGINALS = mysql_fetch_assoc($ORIGINALS);
+$ORIGINALS = mysqli_query($tryconnection, $query_ORIGINALS) or die(mysqli_error($mysqli_link));
+$row_ORIGINALS = mysqli_fetch_assoc($ORIGINALS);
 
 do {
 $key=$row_ORIGINALD['PERSONID'];
 $_SESSION['originald'][$key]=$row_ORIGINALD['SIGNEDIN']; 
 } 
-while ($row_ORIGINALD=mysql_fetch_assoc($ORIGINALD));
+while ($row_ORIGINALD=mysqli_fetch_assoc($ORIGINALD));
 
 do {
 $key=$row_ORIGINALS['PERSONID'];
 $_SESSION['originals'][$key]=$row_ORIGINALS['SIGNEDIN']; 
 } 
-while ($row_ORIGINALS=mysql_fetch_assoc($ORIGINALS));
+while ($row_ORIGINALS=mysqli_fetch_assoc($ORIGINALS));
 }
 
 
@@ -65,23 +65,23 @@ $person=DOCTOR;
 }
 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_STAFF = "SELECT * FROM ".$table." ORDER BY PRIORITY ASC";
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
-$row_STAFF = mysql_fetch_assoc($STAFF);
-$totalRows_STAFF = mysql_num_rows($STAFF);
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
+$row_STAFF = mysqli_fetch_assoc($STAFF);
+$totalRows_STAFF = mysqli_num_rows($STAFF);
 
 
 $query_SIGNEDIN = "SELECT * FROM ".$table." WHERE SIGNEDIN='1' ORDER BY PRIORITY ASC";
-$SIGNEDIN= mysql_query($query_SIGNEDIN, $tryconnection) or die(mysql_error());
-$row_SIGNEDIN = mysql_fetch_assoc($SIGNEDIN);
-$totalRows_SIGNEDIN = mysql_num_rows($SIGNEDIN);
+$SIGNEDIN= mysqli_query($tryconnection, $query_SIGNEDIN) or die(mysqli_error($mysqli_link));
+$row_SIGNEDIN = mysqli_fetch_assoc($SIGNEDIN);
+$totalRows_SIGNEDIN = mysqli_num_rows($SIGNEDIN);
 
 //SIGN IN
 if (isset($_GET['add'])){
 $id=$_GET['add'];
 $query_ADD = "UPDATE ".$table." SET SIGNEDIN=1 WHERE PERSONID='$id'";
-$ADD= mysql_query($query_ADD, $tryconnection) or die(mysql_error());
+$ADD= mysqli_query($tryconnection, $query_ADD) or die(mysqli_error($mysqli_link));
 header("Location: STAFF_SIGN_IN_OUT.php");
 }
 
@@ -89,7 +89,7 @@ header("Location: STAFF_SIGN_IN_OUT.php");
 if (isset($_GET['remove'])){
 $id=$_GET['remove']-100;
 $query_REMOVE = "UPDATE ".$table." SET SIGNEDIN=0 WHERE PERSONID='$id'";
-$REMOVE= mysql_query($query_REMOVE, $tryconnection) or die(mysql_error());
+$REMOVE= mysqli_query($tryconnection, $query_REMOVE) or die(mysqli_error($mysqli_link));
 header("Location: STAFF_SIGN_IN_OUT.php");
 }
 
@@ -97,11 +97,11 @@ header("Location: STAFF_SIGN_IN_OUT.php");
 if (isset($_GET['revert']) || isset($_GET['cancel'])){
 foreach ($_SESSION['originald'] as $key => $value){
 $query_CANCELD = "UPDATE DOCTOR SET SIGNEDIN='$value' WHERE PERSONID='$key'";
-$CANCELD= mysql_query($query_CANCELD, $tryconnection) or die(mysql_error());
+$CANCELD= mysqli_query($tryconnection, $query_CANCELD) or die(mysqli_error($mysqli_link));
 }
 foreach ($_SESSION['originals'] as $key => $values){
 $query_CANCELS = "UPDATE STAFF SET SIGNEDIN='$values' WHERE PERSONID='$key'";
-$CANCELS= mysql_query($query_CANCELS, $tryconnection) or die(mysql_error());
+$CANCELS= mysqli_query($tryconnection, $query_CANCELS) or die(mysqli_error($mysqli_link));
 }
 header("Location: STAFF_SIGN_IN_OUT.php");
 }
@@ -330,7 +330,7 @@ document.getElementById(x).bgColor='#FFFFFF';
     <td align="left" valign="bottom" class="Andale13noDecor"><?php echo $row_STAFF[$person]; ?></td>
     <td width="25" align="center" class="Andale14B" style="color: #446441;"><?php if ($row_STAFF['SIGNEDIN']=="0"){echo ">>";} ?></td>
   </tr>
-          <?php } while ($row_STAFF = mysql_fetch_assoc($STAFF)); ?>
+          <?php } while ($row_STAFF = mysqli_fetch_assoc($STAFF)); ?>
 <tr><td></td>
   <td></td>
 </tr>
@@ -344,7 +344,7 @@ document.getElementById(x).bgColor='#FFFFFF';
     <td height="10" align="left" valign="bottom" class="Andale13noDecor"><?php echo $row_SIGNEDIN[$person]; ?></td>
     <td width="15" align="center" class="Andale14B" style="color:#CC0033;">X</td>
   </tr>
-          <?php } while ($row_SIGNEDIN = mysql_fetch_assoc($SIGNEDIN)); ?> 
+          <?php } while ($row_SIGNEDIN = mysqli_fetch_assoc($SIGNEDIN)); ?> 
 <tr><td></td>
   <td></td>
 </tr>

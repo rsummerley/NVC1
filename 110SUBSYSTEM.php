@@ -6,30 +6,30 @@ $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
  
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_SUBSYSTEM = "SELECT UCASE(TTYPE) AS TTYPE, TDESCR, TCATGRY, TNO, TID, TVAR1 FROM EXAMHOLD WHERE TCATGRY = '$_GET[category]' AND CUSTNO = '$client' AND PETNO = '$patient'";
-$SUBSYSTEM = mysql_query($query_SUBSYSTEM, $tryconnection) or die(mysql_error());
-$row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM);
-$totalRows_SUBSYSTEM = mysql_num_rows($SUBSYSTEM);
+$SUBSYSTEM = mysqli_query($tryconnection, $query_SUBSYSTEM) or die(mysqli_error($mysqli_link));
+$row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM);
+$totalRows_SUBSYSTEM = mysqli_num_rows($SUBSYSTEM);
 
 $query_MEMO = "SELECT TMEMO FROM EXAMHOLD WHERE TCATGRY = '$_GET[category]' AND TNO = '1' AND PETNO = '$patient'";
-$MEMO = mysql_query($query_MEMO, $tryconnection) or die(mysql_error());
-$row_MEMO = mysql_fetch_assoc($MEMO);
+$MEMO = mysqli_query($tryconnection, $query_MEMO) or die(mysqli_error($mysqli_link));
+$row_MEMO = mysqli_fetch_assoc($MEMO);
 
 
 if (isset($_POST['check'])){ 
 	foreach ($_POST['tvar1'] as $key => $value){
-	mysql_select_db($database_tryconnection, $tryconnection);
+	mysqli_select_db($tryconnection, $database_tryconnection);
 	$keyplusone = $key+1;
 	$updateSQL = sprintf("UPDATE EXAMHOLD SET TVAR1 = '%d' WHERE TCATGRY = '%s' AND TNO = '%d' AND CUSTNO = '%d' AND PETNO = '%d'", $value, $_GET['category'], $keyplusone, $_GET['client'], $_GET['patient']);
-	$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+	$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 	}
 	
 	$update_MEMO = sprintf("UPDATE EXAMHOLD SET TMEMO = '%s' WHERE TCATGRY = '%s' AND TNO = '1' AND PETNO = '%d'",
-				mysql_real_escape_string($_POST['tmemo']), 
+				mysqli_real_escape_string($mysqli_link, $_POST['tmemo']), 
 				$_GET['category'], 
 				$_GET['patient']);
-	$MEMO= mysql_query($update_MEMO, $tryconnection) or die(mysql_error());
+	$MEMO= mysqli_query($tryconnection, $update_MEMO) or die(mysqli_error($mysqli_link));
 
 $closewin="opener.document.location.reload(); self.close();";
 }
@@ -122,7 +122,7 @@ function marksubsys(x,y){
     </td>
     </tr>
    
-   <?php } while ($row_SUBSYSTEM = mysql_fetch_assoc($SUBSYSTEM)); ?> 
+   <?php } while ($row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM)); ?> 
  
   <tr>
     <td height="5" class="Labels"></td>

@@ -5,35 +5,35 @@ require_once('../../../tryconnection.php');
 $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT = sprintf("SELECT PLIFE, PETTYPE FROM PETMAST WHERE PETMAST.PETID = %s", $patient);
-$PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT = mysql_fetch_assoc($PATIENT);
+$PATIENT = mysqli_query($tryconnection, $query_PATIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
-$EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
-$row_EXAM = mysql_fetch_assoc($EXAM);
+$EXAM = mysqli_query($tryconnection, $query_EXAM) or die(mysqli_error($mysqli_link));
+$row_EXAM = mysqli_fetch_assoc($EXAM);
  
 $species=$row_PATIENT['PETTYPE'];
 
 $query_LIFESTYLE = "SELECT * FROM PETLIFESTYLE WHERE LSPECIES='$species' ORDER BY LIFESTYLE";
-$LIFESTYLE = mysql_query($query_LIFESTYLE, $tryconnection) or die(mysql_error());
-$row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE);
-$totalRows_LIFESTYLE = mysql_num_rows($LIFESTYLE);
+$LIFESTYLE = mysqli_query($tryconnection, $query_LIFESTYLE) or die(mysqli_error($mysqli_link));
+$row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE);
+$totalRows_LIFESTYLE = mysqli_num_rows($LIFESTYLE);
 
 $plife=0;
 if (isset($_POST['save'])){
 $plife=implode(",",$_POST['plife']);
 	if ($patient!=0){
 	$updateSQL = "UPDATE PETMAST SET PLIFE='$plife'WHERE PETID='$patient'";
-	$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+	$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 	}
 
 $updateSQL = sprintf("UPDATE EXAMHOLD2 SET VACCINESMEMO = '%s', PARCONTROLMEMO = '%s' WHERE PETNO = '$patient'", 
-				mysql_real_escape_string($_POST['vaccinesmemo']),
-				mysql_real_escape_string($_POST['parcontrolmemo'])
+				mysqli_real_escape_string($mysqli_link, $_POST['vaccinesmemo']),
+				mysqli_real_escape_string($mysqli_link, $_POST['parcontrolmemo'])
 				);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 
 $closewin="opener.document.location.reload(); self.close();";
 }
@@ -101,7 +101,7 @@ if (winclosed != 1){
           <?php echo $row_LIFESTYLE['LIFESTYLE']; ?></label> </td>
       </tr>
               
-              <?php } while ($row_LIFESTYLE = mysql_fetch_assoc($LIFESTYLE)); ?>
+              <?php } while ($row_LIFESTYLE = mysqli_fetch_assoc($LIFESTYLE)); ?>
   </table>
     </div>  </td>
   </tr>  

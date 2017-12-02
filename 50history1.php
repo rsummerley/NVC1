@@ -1,7 +1,7 @@
 <?php
 session_start();
 function history($database_tryconnection, $tryconnection, $filter){
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
@@ -18,8 +18,8 @@ if (!empty($_POST['from']) || !empty($_POST['to'])){
 	}
 	
 	$startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-	$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-	$startdate=mysql_fetch_array($startdate);
+	$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
+	$startdate=mysqli_fetch_array($startdate);
 	
 	if (!empty($_POST['to'])){
 	$enddate=$_POST['to'];
@@ -29,16 +29,16 @@ if (!empty($_POST['from']) || !empty($_POST['to'])){
 	}
 	
 	$enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-	$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-	$enddate=mysql_fetch_array($enddate);
+	$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
+	$enddate=mysqli_fetch_array($enddate);
 $fromto="AND TREATDATE >= '$startdate[0]' AND TREATDATE <= '$enddate[0]'";
 }//if (!empty($_POST['from']) || !empty($_POST['to']))
 
 
 ////////////////////////VIEW FROM TREATMXX////////////////////////WHERE PETID='$patient'
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
-$row_PREFER = mysql_fetch_assoc($PREFER);
+$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
+$row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
@@ -46,14 +46,14 @@ $treatmxx="TREATM".floor($treatmxx);
 $hxview="HX".$patient;
 
 $query_VIEWHX="CREATE OR REPLACE VIEW $hxview AS SELECT * FROM $treatmxx WHERE PETID='$patient'";
-$VIEWHX= mysql_query($query_VIEWHX, $tryconnection) or $none=1;
+$VIEWHX= mysqli_query($tryconnection, $query_VIEWHX) or $none=1;
 
 
 
 
 $query_HX="SELECT *, DATE_FORMAT(TREATDATE,'%m/%d/%Y') AS TREATDATE FROM $hxview WHERE PETID='$patient' AND HCAT & '$filter' ".$fromto." ORDER BY TREATDATE, LINENUMBER";
-$HX= mysql_query($query_HX, $tryconnection) or die(mysql_error());
-$row_HX = mysql_fetch_assoc($HX);
+$HX= mysqli_query($tryconnection, $query_HX) or die(mysqli_error($mysqli_link));
+$row_HX = mysqli_fetch_assoc($HX);
 
 if (empty($row_HX)){
 echo "I'm sorry, this client doesn't have any record in the medical history. It's not my fault.";
@@ -406,7 +406,7 @@ echo "</tr>\n";
 						
 
 }
-while ($row_HX = mysql_fetch_assoc($HX));
+while ($row_HX = mysqli_fetch_assoc($HX));
 
 
 
@@ -466,6 +466,6 @@ if ( $xxx < 53 || $xxx > 80){
 
 
 $query_VIEWHX="DROP VIEW $hxview";
-$VIEWHX= mysql_query($query_VIEWHX, $tryconnection) or $none=1;
+$VIEWHX= mysqli_query($tryconnection, $query_VIEWHX) or $none=1;
 }
 ?>

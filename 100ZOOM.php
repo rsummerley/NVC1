@@ -5,20 +5,20 @@ include("../ASSETS/age.php");
 
 $client=$_GET['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 ////////////////////////////////// CLIENT ///////////////////////////////////
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO = '$client'";
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
 ///////////////////////////////// PATIENTS ////////////////////////////////////
 $pdead=" AND PDEAD=0";
 if (isset($_GET['pdead'])){
 $pdead='';
 }
 $query_PATIENTS = "SELECT PETID, CUSTNO, PETNO, PETNAME, PETTYPE, PETBREED, PSEX, PDOB, PWEIGHT, PDEAD FROM PETMAST WHERE CUSTNO = '$client'".$pdead." ORDER BY PETNAME ASC";
-$PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
-$row_PATIENTS = mysql_fetch_assoc($PATIENTS);
-$totalRows_PATIENTS = mysql_num_rows($PATIENTS);
+$PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
+$row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
+$totalRows_PATIENTS = mysqli_num_rows($PATIENTS);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -104,7 +104,7 @@ document.getElementById(x).style.backgroundColor=y;
                   <td width="70" height="15" align="center"><?php if($row_PATIENTS['PWEIGHT']<'10'){echo '&nbsp;'.$row_PATIENTS['PWEIGHT'];} else {echo $row_PATIENTS['PWEIGHT'];} echo " ".$_SESSION['weightunit']; ?></td>
                   <td height="15"><span class="Verdana11B"><?php if ($row_PATIENTS['PDEAD']=='1'){echo "Dec.";}?></span></td>
                 </tr>
-                <?php } while ($row_PATIENTS = mysql_fetch_assoc($PATIENTS)); ?>
+                <?php } while ($row_PATIENTS = mysqli_fetch_assoc($PATIENTS)); ?>
              </table>    
         </div>      
         </td>

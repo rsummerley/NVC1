@@ -6,17 +6,17 @@ include("../../ASSETS/age.php");
 $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
-$row_PATIENT_CLIENT = mysql_fetch_assoc($PATIENT_CLIENT);
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
+$row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
 
 ////////////////////// PRESENTING PROBLEM ////////////////////////////////
 $query_RECEP = "SELECT RECEPID, PROBLEM, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE RFPETID='$patient'";
-$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
-$row_RECEP = mysql_fetch_assoc($RECEP);
+$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
+$row_RECEP = mysqli_fetch_assoc($RECEP);
 
 
 $pdob=$row_PATIENT_CLIENT['PDOB'];
@@ -31,25 +31,25 @@ $psex=$row_PATIENT_CLIENT['PSEX'];
 //include("../../ASSETS/history.php");
 
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
-$select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
-$row_MEDNOTE = mysql_fetch_assoc($select_MEDNOTE);
+$select_MEDNOTE = mysqli_query($tryconnection, $select_MEDNOTE) or die(mysqli_error($mysqli_link));
+$row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);
 
 
 //INSERT INTO RECEP IF NOT INSERTED YET
 if (isset($_POST['check']) && empty($row_RECEP['PROBLEM'])){
-$insert_RECEP="INSERT INTO RECEP (CUSTNO, NAME, RFPETID, PETNAME, PSEX, RFPETTYPE, LOCATION, DESCRIP, FNAME, PROBLEM, AREA1, PH1, AREA2, PH2, AREA3, PH3, DATEIN, TIME, DATETIME) VALUES ('$client', '".mysql_real_escape_string($row_PATIENT_CLIENT['COMPANY'])."', '$patient', '".mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME'])."', '$psex', '$row_PATIENT_CLIENT[PETTYPE]', '2', '$row_PATIENT_CLIENT[PETBREED]','$row_PATIENT_CLIENT[CONTACT]','".mysql_real_escape_string($_POST['nproblem'])."', '$row_PATIENT_CLIENT[AREA]','$row_PATIENT_CLIENT[PHONE]','$row_PATIENT_CLIENT[CAREA2]','$row_PATIENT_CLIENT[PHONE2]','$row_PATIENT_CLIENT[CAREA3]','$row_PATIENT_CLIENT[PHONE3]', NOW(), NOW(), NOW())";
-$insRECEP=mysql_query($insert_RECEP,$tryconnection) or die(mysql_error());
+$insert_RECEP="INSERT INTO RECEP (CUSTNO, NAME, RFPETID, PETNAME, PSEX, RFPETTYPE, LOCATION, DESCRIP, FNAME, PROBLEM, AREA1, PH1, AREA2, PH2, AREA3, PH3, DATEIN, TIME, DATETIME) VALUES ('$client', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['COMPANY'])."', '$patient', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETNAME'])."', '$psex', '$row_PATIENT_CLIENT[PETTYPE]', '2', '$row_PATIENT_CLIENT[PETBREED]','$row_PATIENT_CLIENT[CONTACT]','".mysqli_real_escape_string($mysqli_link, $_POST['nproblem'])."', '$row_PATIENT_CLIENT[AREA]','$row_PATIENT_CLIENT[PHONE]','$row_PATIENT_CLIENT[CAREA2]','$row_PATIENT_CLIENT[PHONE2]','$row_PATIENT_CLIENT[CAREA3]','$row_PATIENT_CLIENT[PHONE3]', NOW(), NOW(), NOW())";
+$insRECEP=mysqli_query($tryconnection, $insert_RECEP) or die(mysqli_error($mysqli_link));
 }
 
 else if (isset($_POST['check']) && !empty($row_RECEP['PROBLEM'])){
-$query_insertSQL="UPDATE RECEP SET PROBLEM='".mysql_real_escape_string($_POST['nproblem'])."', DATEIN=NOW(), TIME=NOW() WHERE RFPETID='$patient'";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+$query_insertSQL="UPDATE RECEP SET PROBLEM='".mysqli_real_escape_string($mysqli_link, $_POST['nproblem'])."', DATEIN=NOW(), TIME=NOW() WHERE RFPETID='$patient'";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 }
 
 
 if (isset($_POST['check']) && empty($row_MEDNOTE)){
-$insert_MEDNOTE="INSERT INTO MEDNOTES (NCUSTNO, NPET, NPROBLEM, NDIAGNOSIS, NPROCEDURES, NCLINSTR, NCASESUM) VALUES ('$client', '$patient', '".mysql_real_escape_string($_POST['nproblem'])."', '".mysql_real_escape_string($_POST['ndiagnosis'])."', '".mysql_real_escape_string($_POST['nprocedures'])."', '".mysql_real_escape_string($_POST['nclinstr'])."', '".mysql_real_escape_string($_POST['ncasesum'])."')";
-$MEDNOTE = mysql_query($insert_MEDNOTE, $tryconnection) or die(mysql_error());
+$insert_MEDNOTE="INSERT INTO MEDNOTES (NCUSTNO, NPET, NPROBLEM, NDIAGNOSIS, NPROCEDURES, NCLINSTR, NCASESUM) VALUES ('$client', '$patient', '".mysqli_real_escape_string($mysqli_link, $_POST['nproblem'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['ndiagnosis'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['nprocedures'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['nclinstr'])."', '".mysqli_real_escape_string($mysqli_link, $_POST['ncasesum'])."')";
+$MEDNOTE = mysqli_query($tryconnection, $insert_MEDNOTE) or die(mysqli_error($mysqli_link));
 
 if (isset($_POST['save'])){
 header("Location:PROCESSING_MENU.php");
@@ -61,8 +61,8 @@ $openpreview="window.open('../../IMAGES/CUSTOM_DOCUMENTS/DISCHARGE_SHEET.php?pre
 
 
 else if (isset($_POST['check']) && !empty($row_MEDNOTE)){
-$update_MEDNOTE="UPDATE MEDNOTES SET NPROBLEM='".mysql_real_escape_string($_POST['nproblem'])."', NDIAGNOSIS='".mysql_real_escape_string($_POST['ndiagnosis'])."', NPROCEDURES='".mysql_real_escape_string($_POST['nprocedures'])."', NCLINSTR='".mysql_real_escape_string($_POST['nclinstr'])."', NCASESUM='".mysql_real_escape_string($_POST['ncasesum'])."' WHERE NPET='$patient'";
-$MEDNOTE = mysql_query($update_MEDNOTE, $tryconnection) or die(mysql_error());
+$update_MEDNOTE="UPDATE MEDNOTES SET NPROBLEM='".mysqli_real_escape_string($mysqli_link, $_POST['nproblem'])."', NDIAGNOSIS='".mysqli_real_escape_string($mysqli_link, $_POST['ndiagnosis'])."', NPROCEDURES='".mysqli_real_escape_string($mysqli_link, $_POST['nprocedures'])."', NCLINSTR='".mysqli_real_escape_string($mysqli_link, $_POST['nclinstr'])."', NCASESUM='".mysqli_real_escape_string($mysqli_link, $_POST['ncasesum'])."' WHERE NPET='$patient'";
+$MEDNOTE = mysqli_query($tryconnection, $update_MEDNOTE) or die(mysqli_error($mysqli_link));
 
 if (isset($_POST['save'])){
 header("Location:PROCESSING_MENU.php");

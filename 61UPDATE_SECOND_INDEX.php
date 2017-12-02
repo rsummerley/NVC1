@@ -1,10 +1,10 @@
 <?php 
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_SECINDEX = sprintf("SELECT * FROM SECINDEX WHERE SECINDEX = '$_GET[secindex]'");
-$SECINDEX = mysql_query($query_SECINDEX, $tryconnection) or die(mysql_error());
-$row_SECINDEX = mysql_fetch_assoc($SECINDEX);
+$SECINDEX = mysqli_query($tryconnection, $query_SECINDEX) or die(mysqli_error($mysqli_link));
+$row_SECINDEX = mysqli_fetch_assoc($SECINDEX);
 
 if (!empty($_POST['homepha'])){$homeph=$_POST['homepha'].'-'.$_POST['homephb'];}
 if (!empty($_POST['worka'])){$work=$_POST['worka'].'-'.$_POST['workb'];}
@@ -29,7 +29,7 @@ if (isset($_POST['save']) && $_GET['secindex']!="0") {
 					  $_POST['email2'],
 					  !empty($_POST['authorized']) ? "1" : "0",
                       $_GET['secindex']);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 $closewindow="self.close();";
 }
 
@@ -51,13 +51,13 @@ $insertSQL = sprintf("INSERT INTO SECINDEX (CUSTNO, FNAME, LNAME, RELATION, HOME
 						$_POST['email2'],
 						!empty($_POST['authorized']) ? "1" : "0"
 						);
-$Result1 = mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 $closewindow="self.close();";
 }
 
 else if (isset($_POST['delete'])){
 $delete="DELETE FROM SECINDEX WHERE SECINDEX='$_GET[secindex]'";
-$result=mysql_query($delete, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $delete) or die(mysqli_error($mysqli_link));
 $closewindow='self.close();';
 }
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

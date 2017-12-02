@@ -2,10 +2,10 @@
 session_start(); 
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_HXFILTER2 = "SELECT * FROM HXFILTER WHERE HXGROUP='2'";
-$HXFILTER2 = mysql_query($query_HXFILTER2, $tryconnection) or die(mysql_error());
-$row_HXFILTER2 = mysql_fetch_assoc($HXFILTER2);
+$HXFILTER2 = mysqli_query($tryconnection, $query_HXFILTER2) or die(mysqli_error($mysqli_link));
+$row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2);
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -44,7 +44,7 @@ if (opener.document.getElementById('Obj').checked){
 echo "if (opener.document.getElementById('".substr($row_HXFILTER2['HXCNAME'],0,3)."').checked){
 	document.more_filter.".substr($row_HXFILTER2['HXCNAME'],0,3).".checked=true;
 	}";
-} while ($row_HXFILTER2 = mysql_fetch_assoc($HXFILTER2));
+} while ($row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2));
 
 ?>
 }
@@ -59,15 +59,15 @@ if (document.more_filter.Obj.checked){
 	}
 	
 <?php 
-$HXFILTER2 = mysql_query($query_HXFILTER2, $tryconnection) or die(mysql_error());
-$row_HXFILTER2 = mysql_fetch_assoc($HXFILTER2);
+$HXFILTER2 = mysqli_query($tryconnection, $query_HXFILTER2) or die(mysqli_error($mysqli_link));
+$row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2);
 
 do{
 
 echo "if (document.more_filter.".substr($row_HXFILTER2['HXCNAME'],0,3).".checked){
 	opener.document.getElementById('".substr($row_HXFILTER2['HXCNAME'],0,3)."').checked=true;
 	}";
-} while ($row_HXFILTER2 = mysql_fetch_assoc($HXFILTER2));
+} while ($row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2));
 
 ?>
 	

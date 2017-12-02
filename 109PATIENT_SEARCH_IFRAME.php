@@ -5,14 +5,14 @@ require_once('../../tryconnection.php');
 /////////////////////////////////////
 if (!empty($_GET['pet2search'])){
 $_SESSION['pet2search'] = $_GET['pet2search'];
-$pet2search = mysql_real_escape_string($_SESSION['pet2search']);
+$pet2search = mysqli_real_escape_string($mysqli_link, $_SESSION['pet2search']);
 }
 elseif (empty($_GET['pet2search']) && isset($_GET['pet2search']))
 {
 unset($_SESSION['pet2search']);
 }
 else{
-$pet2search = mysql_real_escape_string($_SESSION['pet2search']);
+$pet2search = mysqli_real_escape_string($mysqli_link, $_SESSION['pet2search']);
 }
 /////////////////////////////////////
 if (!empty($_GET['prabtag'])){
@@ -77,23 +77,23 @@ $_SESSION['start']=0;
 }
 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENTS = "SELECT  SQL_CALC_FOUND_ROWS PETID, CUSTNO, PETNAME, PSEX, PRABTAG, PTATNO, PRABLAST, PFILENO, PETTYPE FROM PETMAST WHERE PDEAD='0' AND PETNAME LIKE '$pet2search%' AND (PRABTAG LIKE '$prabtag%' OR PRABLAST LIKE '$prabtag%') AND PTATNO LIKE '$ptatno%' ORDER BY ".$sortby." ASC LIMIT ".$start.", 16 ";
-$PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
-$totalRows_PATIENTS = mysql_num_rows($PATIENTS);
-$row_PATIENTS = mysql_fetch_assoc($PATIENTS);
+$PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
+$totalRows_PATIENTS = mysqli_num_rows($PATIENTS);
+$row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 
 $query_NUMBER="SELECT FOUND_ROWS()";
-$NUMBER=mysql_query($query_NUMBER, $tryconnection) or die(mysql_error());
-$row_NUMBER = mysql_fetch_array($NUMBER);
+$NUMBER=mysqli_query($tryconnection, $query_NUMBER) or die(mysqli_error($mysqli_link));
+$row_NUMBER = mysqli_fetch_array($NUMBER);
 $_SESSION['number']=$row_NUMBER[0];
 
 function displayclient($database_tryconnection, $tryconnection, $custno){
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLIENT = sprintf("SELECT * FROM ARCUSTO WHERE CUSTNO = '%s' LIMIT 1", $custno);
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
-$row_CLIENT = mysql_fetch_assoc($CLIENT);
-$totalRows_CLIENT = mysql_num_rows($CLIENT);
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
+$row_CLIENT = mysqli_fetch_assoc($CLIENT);
+$totalRows_CLIENT = mysqli_num_rows($CLIENT);
 echo $row_CLIENT['TITLE']." ".$row_CLIENT['CONTACT']." ".$row_CLIENT['COMPANY']." (".$row_CLIENT['PHONE'].")";
 }
 
@@ -182,7 +182,7 @@ document.getElementById(petno).style.display="";
       <td width="" height="10" align="left" valign="middle"><?php displayclient($database_tryconnection, $tryconnection, $row_PATIENTS['CUSTNO']); ?></td>
     </tr>
     
-    <?php } while ($row_PATIENTS = mysql_fetch_assoc($PATIENTS)); ?>
+    <?php } while ($row_PATIENTS = mysqli_fetch_assoc($PATIENTS)); ?>
     
     <tr height="40" valign="middle">
     <td colspan="5" align="center" class="Verdana11Grey">Displaying records: 
