@@ -18,17 +18,17 @@ $client=$_SESSION['client'];
 }
 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 ////////////////////////////////// CLIENT ///////////////////////////////////
 $q_this = "SELECT SUM(ITOTAL) AS ITHIS FROM ARINVOI WHERE CUSTNO = '$client' " ;
-$do_this = mysql_query($q_this, $tryconnection) or die(mysql_error()) ;
+$do_this = mysqli_query($tryconnection, $q_this) or die(mysqli_error($mysqli_link)) ;
 $g_this = mysqli_fetch_assoc($do_this) ;
 $q_last = "SELECT SUM(ITOTAL) AS ILAST FROM INVLAST WHERE CUSTNO = '$client' " ;
-$do_last = mysql_query($q_last, $tryconnection) or die(mysql_error()) ;
+$do_last = mysqli_query($tryconnection, $q_last) or die(mysqli_error($mysqli_link)) ;
 $g_last = mysqli_fetch_assoc($do_last) ;
 $q_hx = "SELECT SUM(ITOTAL) AS IHX FROM ARYINVO WHERE INVDTE >= DATE_SUB(NOW(), INTERVAL 1 YEAR) AND CUSTNO = '$client' " ;
-$do_hx = mysql_query($q_hx, $tryconnection) or die(mysql_error()) ;
+$do_hx = mysqli_query($tryconnection, $q_hx) or die(mysqli_error($mysqli_link)) ;
 $g_hx = mysqli_fetch_assoc($do_hx) ;
 $thisX = $g_this['ITHIS'] ;
 $lastX = $g_last['ILAST'] ;
@@ -39,7 +39,7 @@ if ( is_null($hxX))   {$hxX = 0 ;}
 $yrsls = $thisX + $lastX + $hxX ;
 
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO = '$client' LIMIT 1";
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
 $row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 /*if ($row_CLIENT['LOCKED']=='1'){
@@ -63,7 +63,7 @@ if (isset($_GET['pdead'])){
 $pdead='';
 }
 $query_PATIENTS = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB, DATE_FORMAT(PDEADATE,'%m/%d/%Y') AS PDEADATE, DATE_FORMAT(PRABDAT,'%m/%d/%Y') AS PRABDAT, DATE_FORMAT(POTHDAT,'%m/%d/%Y') AS POTHDAT, DATE_FORMAT(PLEUKDAT,'%m/%d/%Y') AS PLEUKDAT, DATE_FORMAT(POTHTWO,'%m/%d/%Y') AS POTHTWO, DATE_FORMAT(POTHTHR,'%m/%d/%Y') AS POTHTHR, DATE_FORMAT(POTHFOR,'%m/%d/%Y') AS POTHFOR, DATE_FORMAT(POTHFIV,'%m/%d/%Y') AS POTHFIV, DATE_FORMAT(POTHSIX,'%m/%d/%Y') AS POTHSIX, DATE_FORMAT(POTHSEV,'%m/%d/%Y') AS POTHSEV, DATE_FORMAT(POTH8,'%m/%d/%Y') AS POTH8, DATE_FORMAT(POTH9,'%m/%d/%Y') AS POTH9, DATE_FORMAT(POTH10,'%m/%d/%Y') AS POTH10, DATE_FORMAT(POTH11,'%m/%d/%Y') AS POTH11, DATE_FORMAT(POTH12,'%m/%d/%Y') AS POTH12, DATE_FORMAT(POTH13,'%m/%d/%Y') AS POTH13, DATE_FORMAT(POTH14,'%m/%d/%Y') AS POTH14, DATE_FORMAT(POTH15,'%m/%d/%Y') AS POTH15, DATE_FORMAT(PFIRSTDATE,'%m/%d/%Y') AS PFIRSTDATE, DATE_FORMAT(PLASTDATE,'%m/%d/%Y') AS PLASTDATE FROM PETMAST WHERE CUSTNO = '$client'".$pdead." ORDER BY PETNAME ASC";
-$PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
+$PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
 $row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 
 function validity($mydate,$interv){
@@ -122,9 +122,9 @@ $datetime=date("Y-m-d H:i:s");
 
 if (isset($_POST['comment'])) {
 $updateSQL = sprintf("UPDATE ARCUSTO SET COMMENT='%s' WHERE CUSTNO='%s' LIMIT 1",
-                       mysql_real_escape_string($_POST['commentwrite']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['commentwrite']),
                        $client);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 header("Location: CLIENT_PATIENT_FILE.php");
 }
 
@@ -133,27 +133,27 @@ header("Location: CLIENT_PATIENT_FILE.php");
 $custno=$row_CLIENT['CUSTNO'];
 
 $query_SECINDEX = "SELECT * FROM SECINDEX WHERE CUSTNO = '$custno'";
-$SECINDEX = mysql_query($query_SECINDEX, $tryconnection) or die(mysql_error());
+$SECINDEX = mysqli_query($tryconnection, $query_SECINDEX) or die(mysqli_error($mysqli_link));
 $row_SECINDEX = mysqli_fetch_assoc($SECINDEX);
 $totalRows_SECINDEX = mysqli_num_rows($SECINDEX);
 
 $query_SECADDRESS = "SELECT * FROM SECADDRESS WHERE CUSTNO = '$custno'";
-$SECADDRESS = mysql_query($query_SECADDRESS, $tryconnection) or die(mysql_error());
+$SECADDRESS = mysqli_query($tryconnection, $query_SECADDRESS) or die(mysqli_error($mysqli_link));
 $row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS);
 $totalRows_SECADDRESS = mysqli_num_rows($SECADDRESS);
 
 //////////////////////////// WEIGHT UNIT FROM CRITDATA /////////////////////////////////////////
 
 $query_CRITDATA = "SELECT CRITDATA.WEIGHTUNIT FROM CRITDATA LIMIT 1";
-$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
+$CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
 $row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 $totalRows_CRITDATA = mysqli_num_rows($CRITDATA);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_DLOG = "SELECT DLPETID FROM TICKLER";
-$DLOG = mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
+$DLOG = mysqli_query($tryconnection, $query_DLOG) or die(mysqli_error($mysqli_link));
 $row_DLOG = mysqli_fetch_assoc($DLOG);
 $DLOGarray=array();
 do {
@@ -163,10 +163,10 @@ while ($row_DLOG = mysqli_fetch_assoc($DLOG));
 
 /////////////////////////////PAGING WITHIN CLIENT FILES/////////////////////////
 $query_VIEW="CREATE OR REPLACE VIEW CLIENTS AS SELECT DISTINCT CUSTNO FROM ARCUSTO ORDER BY COMPANY,CONTACT,CUSTNO ASC";
-$VIEW= mysql_query($query_VIEW, $tryconnection) or die(mysql_error());
+$VIEW= mysqli_query($tryconnection, $query_VIEW) or die(mysqli_error($mysqli_link));
 
 $query_COMPANY="SELECT * FROM CLIENTS";
-$COMPANY= mysql_query($query_COMPANY, $tryconnection) or die(mysql_error());
+$COMPANY= mysqli_query($tryconnection, $query_COMPANY) or die(mysqli_error($mysqli_link));
 $row_COMPANY = mysqli_fetch_assoc($COMPANY);
 
 $ids= array();
@@ -179,10 +179,10 @@ $key=array_search($row_CLIENT['CUSTNO'],$ids);
 
 ////////////////////////VIEW FROM DUTY LOG////////////////////////
 $query_VIEWDL="CREATE OR REPLACE VIEW DLOG AS SELECT DLPETID FROM TICKLER";
-$VIEWDL= mysql_query($query_VIEWDL, $tryconnection) or die(mysql_error());
+$VIEWDL= mysqli_query($tryconnection, $query_VIEWDL) or die(mysqli_error($mysqli_link));
 
 $query_DLOG="SELECT * FROM DLOG";
-$DLOG= mysql_query($query_DLOG, $tryconnection) or die(mysql_error());
+$DLOG= mysqli_query($tryconnection, $query_DLOG) or die(mysqli_error($mysqli_link));
 $row_DLOG = mysqli_fetch_assoc($DLOG);
 
 $dls= array();
@@ -562,7 +562,7 @@ function MM_swapImage() { //v3.0
 						      <div class="AccordionPanelContent">                              
 							  <span id="alertdisplay">
 							  <?php //echo $row_CLIENT['ALERTWRITE'];
-							  	  $PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
+							  	  $PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
 								  $row_PATIENTS = mysqli_fetch_assoc($PATIENTS); 
 							  do {
 							  if (strlen(trim($row_PATIENTS['STICKIE'])) > 0){
@@ -573,7 +573,7 @@ function MM_swapImage() { //v3.0
 							  while ($row_PATIENTS = mysqli_fetch_assoc($PATIENTS));
 							  
 							  
-							  $PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
+							  $PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
 							  $row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 
 							  
@@ -623,8 +623,8 @@ function MM_swapImage() { //v3.0
                                       <td>
 									  <?php 
 									  	$refvet=explode(',',$row_CLIENT['REFVET']);
-										$query_REFERRAL = "SELECT * FROM REFER WHERE REFVET='".mysql_real_escape_string($refvet[0])."' AND REFCLIN='".mysql_real_escape_string($row_CLIENT['REFCLIN'])."'";
-										$REFERRAL = mysql_query($query_REFERRAL, $tryconnection) or die(mysql_error());
+										$query_REFERRAL = "SELECT * FROM REFER WHERE REFVET='".mysqli_real_escape_string($mysqli_link, $refvet[0])."' AND REFCLIN='".mysqli_real_escape_string($mysqli_link, $row_CLIENT['REFCLIN'])."'";
+										$REFERRAL = mysqli_query($tryconnection, $query_REFERRAL) or die(mysqli_error($mysqli_link));
 										$row_REFERRAL = mysqli_fetch_assoc($REFERRAL);
 
 									  
@@ -731,7 +731,7 @@ function MM_swapImage() { //v3.0
 	  <input type="hidden" name=patientname value = <?php echo $row_PATIENTS['PETNAME'];?> >
 	  <input type="hidden" name=clientname value = <?php echo $row_CLIENT['COMPANY'];?> >
 	  <input type="hidden" name=clientname value = <?php echo $row_CLIENT['COMPANY'];?> >
-        <tr <?php if (empty($row_PATIENTS)){echo "style='display:none'";}?> class="Verdana11" id="<?php echo $row_PATIENTS['PETID']; ?>" onclick="ClickOnPatient('<?php echo $row_PATIENTS['PETID']; ?>','<?php echo $_GET['refID']; ?>','<?php echo $row_PATIENTS['CUSTNO']; ?>','<?php echo $row_PATIENTS['PETNO']; ?>','<?php echo $row_PATIENTS['PETTYPE']; ?>','<?php  echo mysql_real_escape_string($row_PATIENTS['PETNAME']); ?>','<?php echo $row_PATIENTS['PSEX']; ?>')" onmouseover="highliteline(this.id,'<?php if ($row_PATIENTS['PSEX']=='M'){echo '#DBEBF0';} else {echo '#F9DEE9';} ?>');" onmouseout="whiteoutline(this.id);"  ondblclick="openpage('<?php echo $patient; ?>','<?php echo mysql_real_escape_string($custname); ?>', '<?php echo $custphone; ?>','<?php echo mysql_real_escape_string($petname); ?>','<?php echo $desco; ?>','<?php echo $desct; ?>','<?php echo $custprevbal; ?>','<?php echo $custcurbal; ?>','<?php echo $custterm; ?>','<?php echo $psex; ?>','<?php echo $pdob; ?>','<?php echo $row_PATIENT_CLIENT['PETTYPE']; ?>','<?php echo mysql_real_escape_string($address); ?>','<?php echo mysql_real_escape_string($city); ?>');" >
+        <tr <?php if (empty($row_PATIENTS)){echo "style='display:none'";}?> class="Verdana11" id="<?php echo $row_PATIENTS['PETID']; ?>" onclick="ClickOnPatient('<?php echo $row_PATIENTS['PETID']; ?>','<?php echo $_GET['refID']; ?>','<?php echo $row_PATIENTS['CUSTNO']; ?>','<?php echo $row_PATIENTS['PETNO']; ?>','<?php echo $row_PATIENTS['PETTYPE']; ?>','<?php  echo mysqli_real_escape_string($mysqli_link, $row_PATIENTS['PETNAME']); ?>','<?php echo $row_PATIENTS['PSEX']; ?>')" onmouseover="highliteline(this.id,'<?php if ($row_PATIENTS['PSEX']=='M'){echo '#DBEBF0';} else {echo '#F9DEE9';} ?>');" onmouseout="whiteoutline(this.id);"  ondblclick="openpage('<?php echo $patient; ?>','<?php echo mysqli_real_escape_string($mysqli_link, $custname); ?>', '<?php echo $custphone; ?>','<?php echo mysqli_real_escape_string($mysqli_link, $petname); ?>','<?php echo $desco; ?>','<?php echo $desct; ?>','<?php echo $custprevbal; ?>','<?php echo $custcurbal; ?>','<?php echo $custterm; ?>','<?php echo $psex; ?>','<?php echo $pdob; ?>','<?php echo $row_PATIENT_CLIENT['PETTYPE']; ?>','<?php echo mysqli_real_escape_string($mysqli_link, $address); ?>','<?php echo mysqli_real_escape_string($mysqli_link, $city); ?>');" >
         <td height="15" class="Verdana12B" title="Pet ID:<?php echo $row_PATIENTS['PETID']; ?>"><?php echo $row_PATIENTS['PETNAME']; ?></td>
           <td height="15"><?php if ($row_PATIENTS['PETTYPE']=='1'){echo "Can";} else if ($row_PATIENTS['PETTYPE']=='2'){echo "Fel";} else if ($row_PATIENTS['PETTYPE']=='3'){echo "Equ";}else if ($row_PATIENTS['PETTYPE']=='4'){echo "Bov";}else if ($row_PATIENTS['PETTYPE']=='5'){echo "Cap";}else if ($row_PATIENTS['PETTYPE']=='6'){echo "Por";}else if ($row_PATIENTS['PETTYPE']=='7'){echo "Avi";}else if ($row_PATIENTS['PETTYPE']=='8'){echo "Oth";}; ?></td>
           <td height="15"><?php echo $row_PATIENTS['PETBREED'];  //echo $patient;?></td>

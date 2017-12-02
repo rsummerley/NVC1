@@ -20,9 +20,9 @@ elseif (isset($_SESSION['client'])){
 $client=$_SESSION['client'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
@@ -30,7 +30,7 @@ $pdob=$row_PATIENT_CLIENT['PDOB'];
 $psex=$row_PATIENT_CLIENT['PSEX'];
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR ORDER BY DOCTOR ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 

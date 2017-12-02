@@ -20,9 +20,9 @@ elseif (isset($_SESSION['client'])){
 $client=$_SESSION['client'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
@@ -30,7 +30,7 @@ $pdob=$row_PATIENT_CLIENT['PDOB'];
 $psex=$row_PATIENT_CLIENT['PSEX'];
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR ORDER BY DOCTOR ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $cat=$_GET['subcat'];
@@ -38,7 +38,7 @@ $cat=$_GET['subcat'];
 function categ($tryconnection)
 {
 $query_CATEGORY ="SELECT DISTINCT TCATGRY, TTYPE FROM DIAGNOSI ORDER BY TCATGRY ASC";
-$CATEGORY = mysql_query($query_CATEGORY, $tryconnection) or die(mysql_error());
+$CATEGORY = mysqli_query($tryconnection, $query_CATEGORY) or die(mysqli_error($mysqli_link));
 $row_CATEGORY = mysqli_fetch_assoc($CATEGORY);
 
 echo"<select name='category1' class='SelectList' id='category1' multiple='multiple' onchange='category();' >";
@@ -54,13 +54,13 @@ echo"</select>";
 //////////////////////////LIST PRODUCT SERVICE FROM TREATMENT FEE FILE////////////////////
 function subcateg($tryconnection, $cat)
 {
-$query_PRODUCTSERVICE = sprintf("SELECT TNO, TDESCR, TTYPE, TCATGRY FROM DIAGNOSI WHERE TCATGRY = '%s' ORDER BY TNO ASC",mysql_real_escape_string($cat));
-$PRODUCTSERVICE = mysql_query($query_PRODUCTSERVICE, $tryconnection) or die(mysql_error());
+$query_PRODUCTSERVICE = sprintf("SELECT TNO, TDESCR, TTYPE, TCATGRY FROM DIAGNOSI WHERE TCATGRY = '%s' ORDER BY TNO ASC",mysqli_real_escape_string($mysqli_link, $cat));
+$PRODUCTSERVICE = mysqli_query($tryconnection, $query_PRODUCTSERVICE) or die(mysqli_error($mysqli_link));
 $row_PRODUCTSERVICE = mysqli_fetch_assoc($PRODUCTSERVICE);
 
 echo "<input type='hidden' name='tno' value='".$row_PRODUCTSERVICE['TNO']."' />";
-echo "<input type='hidden' name='ttype' value='".mysql_real_escape_string($row_PRODUCTSERVICE['TTYPE'])."' />";
-echo "<input type='hidden' name='tcatgry' value='".mysql_real_escape_string($row_PRODUCTSERVICE['TCATGRY'])."' />";
+echo "<input type='hidden' name='ttype' value='".mysqli_real_escape_string($mysqli_link, $row_PRODUCTSERVICE['TTYPE'])."' />";
+echo "<input type='hidden' name='tcatgry' value='".mysqli_real_escape_string($mysqli_link, $row_PRODUCTSERVICE['TCATGRY'])."' />";
 echo"<select name='tdescr' id='tdescr' multiple='multiple' class='SelectList' ondblclick='catsubmit();' >";
 do {
 echo"<option value='".$row_PRODUCTSERVICE['TDESCR']."'>";
@@ -94,24 +94,24 @@ $_SESSION['categorization'][] = $problem;
 if (isset($_POST['save'])){
 	//insert into PROBLEMS
 	foreach ($_SESSION['categorization'] as $categorization){
-	$query_PROBLEMS = "INSERT INTO PROBLEMS (CUSTNO, PETID, TREATDATE, TREATDESC, TCATGRY, TNO, TDOCTOR, TDATE) VALUES ('$client', '$patient', STR_TO_DATE('$_SESSION[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($categorization['TTYPE'].": ".$categorization['TDESCR'])."','$categorization[TCATGRY]', '$categorization[TNO]', '".mysql_real_escape_string($_SESSION['tdoctor'])."', NOW())";
-	$query_PROBLEMS = mysql_query($query_PROBLEMS, $tryconnection) or die(mysql_error());
+	$query_PROBLEMS = "INSERT INTO PROBLEMS (CUSTNO, PETID, TREATDATE, TREATDESC, TCATGRY, TNO, TDOCTOR, TDATE) VALUES ('$client', '$patient', STR_TO_DATE('$_SESSION[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $categorization['TTYPE'].": ".$categorization['TDESCR'])."','$categorization[TCATGRY]', '$categorization[TNO]', '".mysqli_real_escape_string($mysqli_link, $_SESSION['tdoctor'])."', NOW())";
+	$query_PROBLEMS = mysqli_query($tryconnection, $query_PROBLEMS) or die(mysqli_error($mysqli_link));
 	}
 
 	//insert into MEDICAL HISTORY
 	$query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-	$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+	$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
 	$row_PREFER = mysqli_fetch_assoc($PREFER);
 	
 	$treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 	$treatmxx="TREATM".floor($treatmxx);
 	
-	$insert_HISTORY = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$client', '$patient', 'NON-ROUTINE EXAM', 1, '01', STR_TO_DATE('$_SESSION[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_SESSION['tdoctor'])."')";
-	mysql_query($insert_HISTORY, $tryconnection) or die(mysql_error());
+	$insert_HISTORY = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$client', '$patient', 'NON-ROUTINE EXAM', 1, '01', STR_TO_DATE('$_SESSION[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_SESSION['tdoctor'])."')";
+	mysqli_query($tryconnection, $insert_HISTORY) or die(mysqli_error($mysqli_link));
 
 	foreach ($_SESSION['categorization'] as $categorization){
-	$insert_HISTORY = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$client', '$patient', '".mysql_real_escape_string($categorization['TTYPE']."::".$categorization['TDESCR'])."', 2, '58', STR_TO_DATE('$_SESSION[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_SESSION['tdoctor'])."')";
-	mysql_query($insert_HISTORY, $tryconnection) or die(mysql_error());
+	$insert_HISTORY = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$client', '$patient', '".mysqli_real_escape_string($mysqli_link, $categorization['TTYPE']."::".$categorization['TDESCR'])."', 2, '58', STR_TO_DATE('$_SESSION[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_SESSION['tdoctor'])."')";
+	mysqli_query($tryconnection, $insert_HISTORY) or die(mysqli_error($mysqli_link));
 	}
 
 

@@ -4,9 +4,9 @@ session_start();
 
 function taxvalue($database_tryconnection, $tryconnection, $minvdte){
 $minvdte=strtotime($minvdte);
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_TAX = "SELECT HGST, HOGST, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA LIMIT 1";
-$TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
+$TAX = mysqli_query($tryconnection, $query_TAX) or die(mysqli_error($mysqli_link));
 $row_TAX = mysqli_fetch_assoc($TAX);
 
 $hgstdate=strtotime($row_TAX['HGSTDATE']);
@@ -30,9 +30,9 @@ else {echo "help!";}
 ////////////////////////////DISPLAY WITH GST NUMBER
 function taxname($database_tryconnection, $tryconnection, $minvdte){
 $minvdte=strtotime($minvdte);
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_TAX = "SELECT HTAXNAME, HOTAXNAME, HGSTNO, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA";
-$TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
+$TAX = mysqli_query($tryconnection, $query_TAX) or die(mysqli_error($mysqli_link));
 $row_TAX = mysqli_fetch_assoc($TAX);
 
 $hgstdate=strtotime($row_TAX['HGSTDATE']);
@@ -53,9 +53,9 @@ else {echo "help!";}
 }
 
 //////////////////////////////////////////////////////////////////////////
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_TAX = "SELECT HTAXNAME, HOTAXNAME, HGSTNO, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA";
-$TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
+$TAX = mysqli_query($tryconnection, $query_TAX) or die(mysqli_error($mysqli_link));
 $row_TAX = mysqli_fetch_assoc($TAX);
 $minvdte=strtotime($_SESSION['minvdte']);
 

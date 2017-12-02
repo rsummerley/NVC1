@@ -1,9 +1,9 @@
 <?php 
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_SECADDRESS = sprintf("SELECT * FROM SECADDRESS WHERE SECADDRESS = '%s'", $_GET['secaddress']);
-$SECADDRESS = mysql_query($query_SECADDRESS, $tryconnection) or die(mysql_error());
+$SECADDRESS = mysqli_query($tryconnection, $query_SECADDRESS) or die(mysqli_error($mysqli_link));
 $row_SECADDRESS = mysqli_fetch_assoc($SECADDRESS);
 
 if (!empty($_POST['tela'])){$tel=$_POST['tela'].'-'.$_POST['telb'];}
@@ -12,12 +12,12 @@ if (!empty($_POST['tel2a'])){$tel2=$_POST['tel2a'].'-'.$_POST['tel2b'];}
 if (isset($_POST['save']) && $_GET['secaddress']!='0') {
 $updateSQL = sprintf("UPDATE SECADDRESS SET CUSTNO='%s', STREET='%s', UNITNO='%s', CITY2='%s', PROV='%s', ZIP2='%s', COUNTRY2='%s', TEL='%s', AREA='%s', EXT='%s', TEL2='%s', AREA2='%s', EXT2='%s', LEGAL='%s', SECNAME='%s' WHERE SECADDRESS='%s'",
                        $_GET['client'],
-                       mysql_real_escape_string($_POST['street']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['street']),
                        $_POST['unitno'],
-                       mysql_real_escape_string($_POST['city2']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['city2']),
                        $_POST['prov'],
                        strtoupper($_POST['zip2']),
-                       mysql_real_escape_string($_POST['country2']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['country2']),
                        $tel,
                        $_POST['area'],
                        $_POST['ext'],
@@ -25,9 +25,9 @@ $updateSQL = sprintf("UPDATE SECADDRESS SET CUSTNO='%s', STREET='%s', UNITNO='%s
                        $_POST['area2'],
                        $_POST['ext2'],
 	                   !empty($_POST['legal']) ? "1" : "0",
-                       mysql_real_escape_string($_POST['secname']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['secname']),
                        $_GET['secaddress']);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 $closewindow="window.open('SECADDRESS_DIRECTORY.php?client=".$_GET['client']."','_self');";
 }
 
@@ -35,12 +35,12 @@ $closewindow="window.open('SECADDRESS_DIRECTORY.php?client=".$_GET['client']."',
 else if (isset($_POST['save']) && $_GET['secaddress']=='0') {
 $insertSQL = sprintf("INSERT INTO SECADDRESS (CUSTNO, STREET, UNITNO, CITY2, PROV, ZIP2, COUNTRY2, TEL, AREA, EXT, TEL2, AREA2, EXT2, LEGAL, SECNAME) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', '%s')",
 						$_GET['client'],
-						mysql_real_escape_string($_POST['street']),
+						mysqli_real_escape_string($mysqli_link, $_POST['street']),
 						$_POST['unitno'],
-						mysql_real_escape_string($_POST['city2']),
+						mysqli_real_escape_string($mysqli_link, $_POST['city2']),
 						$_POST['prov'],
                        strtoupper($_POST['zip2']),
-					    mysql_real_escape_string($_POST['country2']),
+					    mysqli_real_escape_string($mysqli_link, $_POST['country2']),
 					    $tel,
 					    $_POST['area'],
 					    $_POST['ext'],
@@ -48,15 +48,15 @@ $insertSQL = sprintf("INSERT INTO SECADDRESS (CUSTNO, STREET, UNITNO, CITY2, PRO
 						$_POST['area2'],
 						$_POST['ext2'],
 						!empty($_POST['legal']) ? "1" : "0",
-                       mysql_real_escape_string($_POST['secname'])
+                       mysqli_real_escape_string($mysqli_link, $_POST['secname'])
 						);
-$Result1 = mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 $closewindow="window.open('SECADDRESS_DIRECTORY.php?client=".$_GET['client']."','_self');";
 }
 
 else if (isset($_POST['delete'])){
 $delete="DELETE FROM SECADDRESS WHERE SECADDRESS='$_GET[secaddress]'";
-$result=mysql_query($delete, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $delete) or die(mysqli_error($mysqli_link));
 $closewindow="window.open('SECADDRESS_DIRECTORY.php?client=".$_GET['client']."','_self');";
 }
 

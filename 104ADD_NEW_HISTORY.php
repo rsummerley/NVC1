@@ -15,32 +15,32 @@ $patient=$_SESSION['patient'];
 
 $client=$_SESSION['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient'";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 $totalRows_PATIENT_CLIENT = mysqli_num_rows($PATIENT_CLIENT);
 
 $pdob=$row_PATIENT_CLIENT['PDOB'];
 
 $query_HXBUFFER = sprintf("SELECT * FROM HXBUFFER WHERE HXPETID='$patient'");
-$HXBUFFER = mysql_query($query_HXBUFFER, $tryconnection) or die(mysql_error());
+$HXBUFFER = mysqli_query($tryconnection, $query_HXBUFFER) or die(mysqli_error($mysqli_link));
 $row_HXBUFFER = mysqli_fetch_assoc($HXBUFFER);
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR WHERE SIGNEDIN='1' ORDER BY DOCTOR ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $query_STAFF = sprintf("SELECT STAFF FROM STAFF WHERE SIGNEDIN='1' ORDER BY STAFF ASC");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
 $row_STAFF = mysqli_fetch_assoc($STAFF);
 
 $query_HXFILTER = "SELECT * FROM HXFILTER WHERE HXGROUP='1'";
-$HXFILTER = mysql_query($query_HXFILTER, $tryconnection) or die(mysql_error());
+$HXFILTER = mysqli_query($tryconnection, $query_HXFILTER) or die(mysqli_error($mysqli_link));
 $row_HXFILTER = mysqli_fetch_assoc($HXFILTER);
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
 $row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
@@ -53,12 +53,12 @@ if (isset($_POST['save'])){
 $xfilter=implode(",",$_POST['filter']);
 
 	if (!empty($row_HXBUFFER)) {
-		$updateSQL = "UPDATE  HXBUFFER SET HXTEXT='".mysql_real_escape_string($_POST['treatdesc'])."', HXHEADING='$_POST[heading]', HXFILTER='$xfilter', HXDOCTOR='".mysql_real_escape_string($_POST['who'])."' WHERE HXPETID='$_SESSION[patient]'";
-		mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+		$updateSQL = "UPDATE  HXBUFFER SET HXTEXT='".mysqli_real_escape_string($mysqli_link, $_POST['treatdesc'])."', HXHEADING='$_POST[heading]', HXFILTER='$xfilter', HXDOCTOR='".mysqli_real_escape_string($mysqli_link, $_POST['who'])."' WHERE HXPETID='$_SESSION[patient]'";
+		mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 	}
 	else {
-		$insertSQL = "INSERT INTO HXBUFFER (HXPETID, HXTEXT, HXHEADING, HXFILTER, HXDOCTOR) VALUE ('$_SESSION[patient]', '".mysql_real_escape_string($_POST['treatdesc'])."', '$_POST[heading]', '$xfilter', '".mysql_real_escape_string($_POST['who'])."')";
-		mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+		$insertSQL = "INSERT INTO HXBUFFER (HXPETID, HXTEXT, HXHEADING, HXFILTER, HXDOCTOR) VALUE ('$_SESSION[patient]', '".mysqli_real_escape_string($mysqli_link, $_POST['treatdesc'])."', '$_POST[heading]', '$xfilter', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+		mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	}
 if ($_SESSION['path']=='3close'){
 unset($_SESSION['path']);
@@ -79,11 +79,11 @@ header("Location:REVIEW_HISTORY.php?path=procmenu2");
 else if (isset($_POST['finish'])){
 
 	$query_CHECKTABLE="SELECT * FROM $treatmxx LIMIT 1";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	$create_TREATMXX="CREATE TABLE $treatmxx LIKE TREATM0";
-	$result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	$result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	}
 
 
@@ -93,8 +93,8 @@ $filter=array_sum($_POST['filter']);
 ////////////////////////// DUTY LOG ///////////////////////////////
 //////////////////////////////////////////////////////////////////
 	if ($_POST['heading']=="31"){
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'DUTY LOG', $filter, '31', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'DUTY LOG', $filter, '31', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -110,8 +110,8 @@ $filter=array_sum($_POST['filter']);
 			
 			//the HSUBCAT is 33 because 32 is reserved for the original duty log from the DL screen
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', $filter, '33', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', $filter, '33', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	}
 	
@@ -119,8 +119,8 @@ $filter=array_sum($_POST['filter']);
 ////////////////////////// PROCEDURES /////////////////////////////
 //////////////////////////////////////////////////////////////////
 	if ($_POST['heading']=="41"){
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'PROCEDURES', $filter, '41', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'PROCEDURES', $filter, '41', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -135,8 +135,8 @@ $filter=array_sum($_POST['filter']);
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', $filter, '42', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', $filter, '42', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	}
 
@@ -144,8 +144,8 @@ $filter=array_sum($_POST['filter']);
 ////////////////////////// LABORATORY /////////////////////////////
 //////////////////////////////////////////////////////////////////
 	if ($_POST['heading']=="51"){
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'LABORATORY', $filter, '51', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'LABORATORY', $filter, '51', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -160,8 +160,8 @@ $filter=array_sum($_POST['filter']);
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', $filter, '52', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', $filter, '52', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	}
 
@@ -170,8 +170,8 @@ $filter=array_sum($_POST['filter']);
 //////////////////////////////////////////////////////////////////
 
 	else if ($_POST['heading']=="21"){
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'IMAGERY', $filter, '21', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'IMAGERY', $filter, '21', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -186,8 +186,8 @@ $filter=array_sum($_POST['filter']);
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', $filter, '22', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', $filter, '22', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	}
 
@@ -196,8 +196,8 @@ $filter=array_sum($_POST['filter']);
 ///////////////////// CLIENT COMMUNICATION ////////////////////////
 //////////////////////////////////////////////////////////////////
 	else if ($_POST['heading']=="81"){
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'CLIENT COMMUNICATION', $filter, '81', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'CLIENT COMMUNICATION', $filter, '81', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -212,8 +212,8 @@ $filter=array_sum($_POST['filter']);
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', $filter, '82', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', $filter, '82', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	}
 
@@ -222,8 +222,8 @@ $filter=array_sum($_POST['filter']);
 //////////////////////////////////////////////////////////////////
 	else if ($_POST['heading']=="91"){
 	//create the OTHER heading
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'OTHER', $filter, '91', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysql_real_escape_string($_POST['who'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$_SESSION[client]', '$_SESSION[patient]', 'OTHER', $filter, '91', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'), '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -238,14 +238,14 @@ $filter=array_sum($_POST['filter']);
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysql_real_escape_string($note2)."', $filter, '92', '".mysql_real_escape_string($_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$_SESSION[client]', '$_SESSION[patient]','".mysqli_real_escape_string($mysqli_link, $note2)."', $filter, '92', '".mysqli_real_escape_string($mysqli_link, $_POST['who'])."', STR_TO_DATE('$_POST[treatdate]', '%m/%d/%Y'))";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 	}
 
 	// and clear the buffer, as it is finished.
 $DUMP_BUF = "DELETE FROM HXBUFFER WHERE HXPETID='$patient'" ;
-$XITOUT = mysql_query($DUMP_BUF, $tryconnection) or die(mysql_error()) ;
+$XITOUT = mysqli_query($tryconnection, $DUMP_BUF) or die(mysqli_error($mysqli_link)) ;
 
 if ($_SESSION['path']=='3close'){
 unset($_SESSION['path']);

@@ -34,13 +34,13 @@ $client=$_SESSION['client'];
 }
 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 
 $query_WEIGHTUNIT = "SELECT WEIGHTUNIT FROM CRITDATA LIMIT 1";
-$WEIGHTUNIT = mysql_query($query_WEIGHTUNIT, $tryconnection) or die(mysql_error());
+$WEIGHTUNIT = mysqli_query($tryconnection, $query_WEIGHTUNIT) or die(mysqli_error($mysqli_link));
 $row_WEIGHTUNIT = mysqli_fetch_assoc($WEIGHTUNIT);
 
 
@@ -67,7 +67,7 @@ $custcurbal=$row_PATIENT_CLIENT['CREDIT'];
 $custlmonbal=$row_PATIENT_CLIENT['LASTMON'] ;
 //////
 $petname=$row_PATIENT_CLIENT['PETNAME'];
-$_SESSION['petname']=mysql_real_escape_string($petname);
+$_SESSION['petname']=mysqli_real_escape_string($mysqli_link, $petname);
 //////
 if ($row_PATIENT_CLIENT['PETTYPE']=='1'){$pettype = "Canine";} 
 else if ($row_PATIENT_CLIENT['PETTYPE']=='2'){$pettype = "Feline";} 

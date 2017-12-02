@@ -6,14 +6,14 @@ $patient=$_SESSION['patient'];
 $client=$_SESSION['client'];
  
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CATEGORIES = "SELECT DISTINCT TTYPE, TCATGRY FROM EXAMHOLD WHERE PETNO = '$patient' ORDER BY TCATGRY";
-$CATEGORIES = mysql_query($query_CATEGORIES, $tryconnection) or die(mysql_error());
+$CATEGORIES = mysqli_query($tryconnection, $query_CATEGORIES) or die(mysqli_error($mysqli_link));
 $row_CATEGORIES = mysqli_fetch_assoc($CATEGORIES);
 $totalRows_CATEGORIES = mysqli_num_rows($CATEGORIES);
 
 $query_EXAM = "SELECT * FROM EXAMHOLD2 WHERE PETNO = '$patient'";
-$EXAM = mysql_query($query_EXAM, $tryconnection) or die(mysql_error());
+$EXAM = mysqli_query($tryconnection, $query_EXAM) or die(mysqli_error($mysqli_link));
 $row_EXAM = mysqli_fetch_assoc($EXAM);
 
 
@@ -91,11 +91,11 @@ subsystem=window.open('SUBSYSTEM.php?category=' + tcatgry + '&client=' + custno 
 	do { 
 	
 	$query_SUBSYSTEM = "SELECT TVAR1, TDESCR FROM EXAMHOLD WHERE TCATGRY = '$row_CATEGORIES[TCATGRY]' AND PETNO = '$patient' AND TVAR1='1' ";
-	$SUBSYSTEM = mysql_query($query_SUBSYSTEM, $tryconnection) or die(mysql_error());
+	$SUBSYSTEM = mysqli_query($tryconnection, $query_SUBSYSTEM) or die(mysqli_error($mysqli_link));
 	$row_SUBSYSTEM = mysqli_fetch_assoc($SUBSYSTEM);
 
 	$query_TMEMO = "SELECT TMEMO FROM EXAMHOLD WHERE TCATGRY = '$row_CATEGORIES[TCATGRY]' AND TNO = '1' AND PETNO = '$patient'";
-	$TMEMO = mysql_query($query_TMEMO, $tryconnection) or die(mysql_error());
+	$TMEMO = mysqli_query($tryconnection, $query_TMEMO) or die(mysqli_error($mysqli_link));
 	$row_TMEMO = mysqli_fetch_assoc($TMEMO);
 
 	if (!empty($row_SUBSYSTEM)) {

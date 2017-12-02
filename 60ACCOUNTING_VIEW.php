@@ -4,9 +4,9 @@ require_once('../tryconnection.php');
 
 $client=$_GET['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLIENT = "SELECT CUSTNO, SOURCE, CODE, TERMS, SVC, DATE_FORMAT(LDATE,'%m/%d/%Y') AS LDATE, DATE_FORMAT(LASTPAY,'%m/%d/%Y') AS LASTPAY, DISC, BALANCE, YTDSLS, CREDIT, CVISIT, LASTMON, LASTINT, MEMO FROM ARCUSTO WHERE CUSTNO = '$client' LIMIT 1";
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
 $row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 //date and time stamp showing the last time the client file - accounting info was modified in any way. It happens at invoicing, and during client file edits
@@ -15,8 +15,8 @@ $adatetime=date("Y-m-d H:i:s");
 if (isset($_POST['save'])) {
 $updateSQL = sprintf("UPDATE ARCUSTO SET TERMS='%s', MEMO='%s', ADATETIME='$adatetime' WHERE CUSTNO='$client' LIMIT 1",
                       $_POST['terms'],
-                      mysql_real_escape_string($_POST['memo']));
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+                      mysqli_real_escape_string($mysqli_link, $_POST['memo']));
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 $closewin="self.close();";
 }
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

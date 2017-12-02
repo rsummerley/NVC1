@@ -33,9 +33,9 @@ elseif (isset($_SESSION['client'])){
 $client=$_SESSION['client'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_PATIENT_CLIENT = "SELECT *, DATE_FORMAT(PDOB,'%m/%d/%Y') AS PDOB FROM PETMAST JOIN ARCUSTO ON (ARCUSTO.CUSTNO=PETMAST.CUSTNO) WHERE PETID = '$patient' LIMIT 1";
-$PATIENT_CLIENT = mysql_query($query_PATIENT_CLIENT, $tryconnection) or die(mysql_error());
+$PATIENT_CLIENT = mysqli_query($tryconnection, $query_PATIENT_CLIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT_CLIENT = mysqli_fetch_assoc($PATIENT_CLIENT);
 //$totalRows_PATIENT_CLIENT = mysql_num_rows($PATIENT_CLIENT);
 
@@ -43,7 +43,7 @@ $pdob=$row_PATIENT_CLIENT['PDOB'];
 $psex=$row_PATIENT_CLIENT['PSEX'];
 
 $query_DOCTOR = sprintf("SELECT DOCTOR FROM DOCTOR ORDER BY PRIORITY ASC");
-$DOCTOR = mysql_query($query_DOCTOR, $tryconnection) or die(mysql_error());
+$DOCTOR = mysqli_query($tryconnection, $query_DOCTOR) or die(mysqli_error($mysqli_link));
 $row_DOCTOR = mysqli_fetch_assoc($DOCTOR);
 
 $pharmacy1 = 10;
@@ -69,45 +69,45 @@ $lab5 = 99 ;
 $lab6 = 99 ;
 
 $DROP_it = "DROP TEMPORARY TABLE IF EXISTS MPL1" ;
-$DROP_it = mysql_query($DROP_it, $tryconnection) or die(mysql_error());
+$DROP_it = mysqli_query($tryconnection, $DROP_it) or die(mysqli_error($mysqli_link));
 
 $GET_current = "CREATE TEMPORARY TABLE MPL1 (INVDATETIME DATE, CHRONO DATE, INVUNITS INT(6), INVPRICE FLOAT(8,2), INVTOT FLOAT(8,2), INVDESCR CHAR(30), INVCUST CHAR(7), INVPET INT(7), INVMAJ INT(2)) 
 SELECT INVDATETIME, INVDATETIME AS CHRONO, INVUNITS, INVPRICE, INVTOT, INVDESCR, INVCUST, INVPET, INVMAJ FROM DVMINV WHERE INVCUST = '$client' AND INVPET = '$patient'" ;
-$GET_current = mysql_query($GET_current, $tryconnection) or die(mysql_error());
+$GET_current = mysqli_query($tryconnection, $GET_current) or die(mysqli_error($mysqli_link));
 
 $GET_Hx = "INSERT INTO MPL1 SELECT INVDATETIME,INVDATETIME AS CHRONO, INVUNITS, INVPRICE, INVTOT, INVDESCR, INVCUST, INVPET, INVMAJ FROM ARYDVMI WHERE INVCUST = '$client' AND invpet = '$patient'" ;
-$GET_Hx = mysql_query($GET_Hx, $tryconnection) or die(mysql_error());
+$GET_Hx = mysqli_query($tryconnection, $GET_Hx) or die(mysqli_error($mysqli_link));
 
 // Then get the problems out of the PROBLEMS table.
 
 $REAL_problems ="SELECT DATE_FORMAT(TREATDATE, '%m/%d/%Y') AS TREATDATE, TREATDESC FROM PROBLEMS WHERE CUSTNO = '$client' AND PETID = '$patient' ORDER BY TREATDATE DESC" ;
-$REAL_problems = mysql_query($REAL_problems, $tryconnection) or die(mysql_error());
+$REAL_problems = mysqli_query($tryconnection, $REAL_problems) or die(mysqli_error($mysqli_link));
 $row_REAL_problems = mysqli_fetch_assoc($REAL_problems);
 
 // Then sort the temporary table into the six panels, in reverse chrono sequence.
 
 $PHARMACY = "SELECT DATE_FORMAT(INVDATETIME, '%m/%d/%Y') AS WHENWAS, INVDATETIME AS CHRONO, INVUNITS, CONCAT('(',invtot - (invunits * invprice),')','(',invtot,') ',INVDESCR) AS INVDESCR FROM MPL1 WHERE INVMAJ = $pharmacy1 OR INVMAJ = $pharmacy2 ORDER BY CHRONO DESC " ;
-$PHARMACY = mysql_query($PHARMACY, $tryconnection) or die(mysql_error());
+$PHARMACY = mysqli_query($tryconnection, $PHARMACY) or die(mysqli_error($mysqli_link));
 $row_PHARMACY = mysqli_fetch_assoc($PHARMACY);
 
 $FOOD = "SELECT DATE_FORMAT(INVDATETIME, '%m/%d/%Y') AS WHENWAS, INVDATETIME AS CHRONO, INVUNITS, INVDESCR FROM MPL1 WHERE INVMAJ = $food1 OR INVMAJ = $food2 ORDER BY CHRONO DESC " ;
-$FOOD = mysql_query($FOOD, $tryconnection) or die(mysql_error());
+$FOOD = mysqli_query($tryconnection, $FOOD) or die(mysqli_error($mysqli_link));
 $row_FOOD = mysqli_fetch_assoc($FOOD);
 
 $SVACCINES = "SELECT DATE_FORMAT(INVDATETIME, '%m/%d/%Y') AS WHENWAS, INVDATETIME AS CHRONO, INVUNITS, INVDESCR FROM MPL1 WHERE INVMAJ = $vaccines1 OR INVMAJ = $vaccines2  OR INVMAJ = $vaccines3  OR INVMAJ = $vaccines4  OR INVMAJ = $vaccines5 ORDER BY CHRONO DESC " ;
-$SVACCINES = mysql_query($SVACCINES, $tryconnection) or die(mysql_error());
+$SVACCINES = mysqli_query($tryconnection, $SVACCINES) or die(mysqli_error($mysqli_link));
 $row_SVACCINES = mysqli_fetch_assoc($SVACCINES);
 
 $RADIOLOGY = "SELECT DATE_FORMAT(INVDATETIME, '%m/%d/%Y') AS WHENWAS, INVDATETIME AS CHRONO, INVUNITS, INVDESCR FROM MPL1 WHERE INVMAJ = $radiology1 OR INVMAJ = $radiology2 ORDER BY CHRONO DESC " ;
-$RADIOLOGY = mysql_query($RADIOLOGY, $tryconnection) or die(mysql_error());
+$RADIOLOGY = mysqli_query($tryconnection, $RADIOLOGY) or die(mysqli_error($mysqli_link));
 $row_RADIOLOGY = mysqli_fetch_assoc($RADIOLOGY);
 
 $SURGERY = "SELECT DATE_FORMAT(INVDATETIME, '%m/%d/%Y') AS WHENWAS, INVDATETIME AS CHRONO, INVUNITS, INVDESCR FROM MPL1 WHERE INVMAJ = $surgery1 OR INVMAJ = $surgery2 OR INVMAJ = $surgery3 OR INVMAJ = $surgery4 ORDER BY CHRONO DESC " ;
-$SURGERY = mysql_query($SURGERY, $tryconnection) or die(mysql_error());
+$SURGERY = mysqli_query($tryconnection, $SURGERY) or die(mysqli_error($mysqli_link));
 $row_SURGERY = mysqli_fetch_assoc($SURGERY);
 
 $LAB = "SELECT DATE_FORMAT(INVDATETIME, '%m/%d/%Y') AS WHENWAS, INVDATETIME AS CHRONO, INVUNITS, INVDESCR FROM MPL1 WHERE INVMAJ = $lab1 OR INVMAJ = $lab2  OR INVMAJ = $lab3  OR INVMAJ = $lab4  OR INVMAJ = $lab5  OR INVMAJ = $lab6 ORDER BY CHRONO DESC " ;
-$LAB = mysql_query($LAB, $tryconnection) or die(mysql_error());
+$LAB = mysqli_query($tryconnection, $LAB) or die(mysqli_error($mysqli_link));
 $row_LAB = mysqli_fetch_assoc($LAB);
 
 

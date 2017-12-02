@@ -28,11 +28,11 @@ $prtid="X";
 $npfee='X';
 
 $query_CRITDATA = "SELECT HGSTNO FROM CRITDATA LIMIT 1";
-$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
+$CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
 $row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 $query_invdatetime="SELECT STR_TO_DATE('$_SESSION[csminvdte]','%m/%d/%Y')";
-$invdatetime= mysql_unbuffered_query($query_invdatetime, $tryconnection) or die(mysql_error());
+$invdatetime= mysql_unbuffered_query($query_invdatetime, $tryconnection) or die(mysqli_error($mysqli_link));
 $row_invdatetime=mysqli_fetch_array($invdatetime);
 
 // here is where the transaction starts for InnoDB purposes.
@@ -45,8 +45,8 @@ $insert_ARARECV=sprintf("INSERT INTO ARARECV (INVNO, INVDTE, CUSTNO, COMPANY, SA
 					$row_invdatetime[0],
 					"0",
 					"CASUAL SALE",
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$refno,
 					$dtepaid,
 					$tax,
@@ -56,11 +56,11 @@ $insert_ARARECV=sprintf("INSERT INTO ARARECV (INVNO, INVDTE, CUSTNO, COMPANY, SA
 					$ararecv_amtpaid,
 					$ibal
 					);
-$result=mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 	
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[csminvno] '" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -70,8 +70,8 @@ $insert_ARINVOI=sprintf("INSERT INTO ARINVOI (INVNO, INVDTE, CUSTNO, COMPANY, SA
 					$row_invdatetime[0],
 					"0",
 					"CASUAL SALE",
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$refno,
 					$dtepaid,
 					$tax,
@@ -81,15 +81,15 @@ $insert_ARINVOI=sprintf("INSERT INTO ARINVOI (INVNO, INVDTE, CUSTNO, COMPANY, SA
 					$amtpaid,
 					$ibal,
 					$prtid,
-					mysql_real_escape_string($_POST['refvet']),
-					mysql_real_escape_string($_POST['refclin']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refvet']),
+					mysqli_real_escape_string($mysqli_link, $_POST['refclin']),
 					$npfee,
-					mysql_real_escape_string($_SESSION['invdoc']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['invdoc']),
 					$pdead,
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$uni
 					);
-$result=mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 
 //ARCASHR - stores record of cash coming in
 //for each method of payment except for ONAC and PDC
@@ -107,14 +107,14 @@ $insert_ARCASHR=sprintf("INSERT INTO ARCASHR (INVNO, INVDTE, CUSTNO, COMPANY, SA
 					$row_invdatetime[0],
 					"0",
 					"CASUAL SALE",
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$discount,
 					$value1['AMOUNT'],
 					date("Y-m-d H:i:s"),
-					mysql_real_escape_string($value1['METHOD'])
+					mysqli_real_escape_string($mysqli_link, $value1['METHOD'])
 					);
-$result=mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 $ararecv_amtpaid=$ararecv_amtpaid+$value1['AMOUNT'];
 $refno=$value1['METHOD'];
 }
@@ -133,7 +133,7 @@ $insert_ARGST=sprintf("INSERT INTO ARGST (INVNO, INVDTE, CUSTNO, ITOTAL, GST, PR
 					$row_CRITDATA['HGSTNO'],
 					$uni
 					);
-$result=mysql_query($insert_ARGST, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_ARGST) or die(mysqli_error($mysqli_link));
 
 $hxcats=array();
 $petids=array();
@@ -145,9 +145,9 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVGST, INVTAX, 
 					$value2['INVGST'],
 					$value2['INVTAX'],
 					$value2['INVDISC'],
-					mysql_real_escape_string($value2['INVDOC']),
-					mysql_real_escape_string($value2['INVDOC']),
-					mysql_real_escape_string($value2['INVDESCR']),
+					mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+					mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+					mysqli_real_escape_string($mysqli_link, $value2['INVDESCR']),
 					$value2['INVLGSM'],
 					"95",
 					$row_invdatetime[0],
@@ -157,7 +157,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVGST, INVTAX, 
 					$value2['INVDECLINE'],
 					$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 $hxcats[]=$value2['INVHXCAT'];
 $petids[]=$value2['INVPET'];
 
@@ -172,11 +172,11 @@ $insertSQL2 = sprintf("INSERT INTO DVMINV (INVNO, INVCUST, INVPET, INVDATETIME, 
 							  $row_invdatetime[0],
 							  "95",
 							  $value2['INVMIN'],
-							  mysql_real_escape_string($value2['INVDOC']),
-							  mysql_real_escape_string($value2['INVDOC']),
-							  mysql_real_escape_string($value2['INVSTAFF']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVSTAFF']),
 							  $value2['INVUNITS'],
-							  mysql_real_escape_string($value2['INVDESCR']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVDESCR']),
 							  $value2['INVPRICE'],
 							  $value2['INVTOT'],
 							  "95",
@@ -196,13 +196,13 @@ mysql_unbuffered_query($insertSQL2, $tryconnection);
 
 ///////////////////////////////////SOLD LIST and Inventory "Last Sale" update /////////////////////////////////////////////////////
 	if (!empty($value2['INVVPC'])){
-	$insert_INVSOLD = "INSERT INTO INVSOLD (INVVPC, INVDESC, INVUNITS) VALUES ('$value2[INVVPC]', '".mysql_real_escape_string($value2['INVDESCR'])."', '$value2[INVUNITS]')";
-	$INVSOLD = mysql_query($insert_INVSOLD) or die(mysql_error());
+	$insert_INVSOLD = "INSERT INTO INVSOLD (INVVPC, INVDESC, INVUNITS) VALUES ('$value2[INVVPC]', '".mysqli_real_escape_string($mysqli_link, $value2['INVDESCR'])."', '$value2[INVUNITS]')";
+	$INVSOLD = mysqli_query($mysqli_link, $insert_INVSOLD) or die(mysqli_error($mysqli_link));
 	$VPC = $value2['INVVPC'] ;
 	$update_INV = "UPDATE ARINVT SET LASTSALE = DATE(NOW()) WHERE VPARTNO = '$VPC'  LIMIT 1" ; 
-	$INVENTORY = mysql_query($update_INV, $tryconnection) or die(mysql_error()) ;
+	$INVENTORY = mysqli_query($tryconnection, $update_INV) or die(mysqli_error($mysqli_link)) ;
 	$update_INV2 = "UPDATE ARINVT SET ONHAND = ONHAND - '$value2[INVUNITS]'  WHERE VPARTNO = '$VPC' AND MONITOR = 1 LIMIT 1" ; 
-	$INVENTORY2 = mysql_query($update_INV2, $tryconnection) or die(mysql_error()) ;
+	$INVENTORY2 = mysqli_query($tryconnection, $update_INV2) or die(mysqli_error($mysqli_link)) ;
 	}
 
 }//foreach ($_SESSION['casual'] as $value2)
@@ -236,7 +236,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, I
 					"96",
 					$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 
 }
 
@@ -265,7 +265,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, I
 								"92",
 								$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 }//if ($ptax>0)
 
 //GST
@@ -293,7 +293,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, I
 								"90",
 								$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 
 $subtotalcomment=array();
 
@@ -371,11 +371,11 @@ if (isset($_POST['save']) || isset($_POST['prtsave'])){
 
 
 	$query_CRITDATA = "SELECT HGSTNO FROM CRITDATA LIMIT 1";
-	$CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
+	$CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
 	$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 	
 	$query_invdatetime="SELECT STR_TO_DATE('$_SESSION[minvdte]','%m/%d/%Y')";
-	$invdatetime= mysql_query($query_invdatetime, $tryconnection) or die(mysql_error());
+	$invdatetime= mysqli_query($tryconnection, $query_invdatetime) or die(mysqli_error($mysqli_link));
 	$row_invdatetime=mysqli_fetch_array($invdatetime);
 
 
@@ -386,7 +386,7 @@ $discount = 0;
 
 
            $chkdup = "SELECT INVNO,UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno] '" ;
-           $get_dup = mysql_query($chkdup, $tryconnection) or die(mysql_error()) ;
+           $get_dup = mysqli_query($tryconnection, $chkdup) or die(mysqli_error($mysqli_link)) ;
            $row_dup = mysqli_fetch_assoc($get_dup) ;
 
 
@@ -408,14 +408,14 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$discount,
 					$payment,
 					$row_invdatetime[0],
 					$_SESSION['methods'][$key]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			}//if ($_SESSION['methods'][$key]!='ONAC'){
 			
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -426,9 +426,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -437,15 +437,15 @@ BEGIN ;
 					$discount,
 					array_sum($_SESSION['payments']),
 					0);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
        
-             $petname = mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME']);
+             $petname = mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETNAME']);
 
 			//ARINVOI
 			$insert_ARINVOI=sprintf("INSERT INTO ARINVOI (INVNO, INVDTE, CUSTNO, COMPANY, SALESMN, INVORDDOC, PONUM, REFNO, DTEPAID, TAX, PTAX, ITOTAL, DISCOUNT, AMTPAID, IBAL, PRTID, REFVET, REFCLIN, NPFEE, PDEAD, INVPET,UNIQUE1) 
@@ -453,10 +453,10 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['invline']['INVDOC'][0]),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['invline']['INVDOC'][0]),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -466,13 +466,13 @@ BEGIN ;
 					array_sum($_SESSION['payments']),
 					0,
 					0,
-					mysql_real_escape_string($row_PATIENT_CLIENT['REFVET']),
-					mysql_real_escape_string($row_PATIENT_CLIENT['REFCLIN']),
+					mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['REFVET']),
+					mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['REFCLIN']),
 					0,
 					0,
 					$petname,
 					$uni );
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 		}	
 }//if ($row_PATIENT_CLIENT['CREDIT'] == 0 && array_sum($_SESSION['payments']) == $itotal){
 
@@ -498,14 +498,14 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$discount,
 					$payment,
 					$row_invdatetime[0],
 					$_SESSION['methods'][$key]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			}//if ($_SESSION['methods'][$key]!='ONAC'){
 			
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -516,9 +516,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -527,12 +527,12 @@ BEGIN ;
 					$discount,
 					array_sum($_SESSION['payments']),
 					0);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 		
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -541,9 +541,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -553,7 +553,7 @@ BEGIN ;
 					array_sum($_SESSION['payments']),
 					0,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 
 	}
 
@@ -583,14 +583,14 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$_SESSION['methods'][$key],
 					$discount,
 					$payment,
 					$row_invdatetime[0]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			
 			}//if ($_SESSION['methods'][$key]) != 'ONAC'){
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -600,9 +600,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -611,11 +611,11 @@ BEGIN ;
 					$discount,
 					0.00,
 					$ibal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -624,9 +624,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$_SESSION['methods'][0] ,
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -636,10 +636,10 @@ BEGIN ;
 					array_sum($_SESSION['payments']),
 					$ibal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 	
 			$query_BALANCE = "UPDATE ARCUSTO SET BALANCE = '$_SESSION[prevbal]'+$ibal-$credit, CREDIT = CREDIT + $credit WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$BALANCE = mysql_query($query_BALANCE, $tryconnection) or die(mysql_error());
+			$BALANCE = mysqli_query($tryconnection, $query_BALANCE) or die(mysqli_error($mysqli_link));
 		
  }
 }//if ($row_PATIENT_CLIENT['CREDIT'] == 0 && array_sum($_SESSION['payments']) < $itotal){
@@ -672,14 +672,14 @@ $cashback = array_sum($_SESSION['payments']) ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][$key],
 					$discount,
 					$payment,
 					$row_invdatetime[0]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			
 			}//if ($_SESSION['methods'][$key]) != 'ONAC'){
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -689,27 +689,27 @@ $cashback = array_sum($_SESSION['payments']) ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$discount,
 					$itotal - $cashback,
 					$row_invdatetime[0],
 					"DEP.AP");
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 
 			$insert_ARCASHR = sprintf("INSERT INTO ARCASHR (INVNO, INVDTE, CUSTNO, COMPANY, SALESMN, PONUM, DISCOUNT, AMTPAID, DTEPAID, REFNO) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$discount,
 					-($itotal - $cashback),
 					$row_invdatetime[0],
 					"DEP.AP");
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());						
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));						
 	
 		
 			//ARARECV
@@ -717,9 +717,9 @@ $cashback = array_sum($_SESSION['payments']) ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					'DEP.AP.',
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -728,11 +728,11 @@ $cashback = array_sum($_SESSION['payments']) ;
 					$discount,
 					$itotal,
 					$ibal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -742,9 +742,9 @@ $cashback = array_sum($_SESSION['payments']) ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -754,13 +754,13 @@ $cashback = array_sum($_SESSION['payments']) ;
 					$itotal,
 					$ibal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 	
 	$query_BALANCE = "UPDATE ARCUSTO SET BALANCE = '$_SESSION[prevbal]'+$itotal-".array_sum($_SESSION['payments'])." WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-	$BALANCE = mysql_query($query_BALANCE, $tryconnection) or die(mysql_error());
+	$BALANCE = mysqli_query($tryconnection, $query_BALANCE) or die(mysqli_error($mysqli_link));
 
 	$query_CREDIT = "UPDATE ARCUSTO SET CREDIT=CREDIT-$itotal+".array_sum($_SESSION['payments'])." WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-	$CREDIT = mysql_query($query_CREDIT, $tryconnection) or die(mysql_error());
+	$CREDIT = mysqli_query($tryconnection, $query_CREDIT) or die(mysqli_error($mysqli_link));
 		
  }
 }//if (array_sum($_SESSION['payments']) < $GrandTOTAL && array_sum($_SESSION['payments']) != $itotal){
@@ -784,9 +784,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -795,11 +795,11 @@ BEGIN ;
 					$discount,
 					0.00,
 					$ibal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -808,9 +808,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -820,10 +820,10 @@ BEGIN ;
 					array_sum($_SESSION['payments']),
 					$ibal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 	
 			$query_BALANCE = "UPDATE ARCUSTO SET BALANCE = '$_SESSION[prevbal]'+$ibal WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$BALANCE = mysql_query($query_BALANCE, $tryconnection) or die(mysql_error());
+			$BALANCE = mysqli_query($tryconnection, $query_BALANCE) or die(mysqli_error($mysqli_link));
 
 	
 		}
@@ -852,14 +852,14 @@ BEGIN;
 					'DEP.',
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][$key],
 					$discount,
 					$payment,
 					$row_invdatetime[0]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			
 			}//if ($_SESSION['methods'][$key]) != 'ONAC'){
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -869,9 +869,9 @@ BEGIN;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					'  ',
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -880,11 +880,11 @@ BEGIN;
 					$discount,
 					0.00,
 					$ibal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]'" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -893,9 +893,9 @@ BEGIN;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -905,10 +905,10 @@ BEGIN;
 					array_sum($_SESSION['payments']),
 					$ibal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 	
 			$query_BALANCE = "UPDATE ARCUSTO SET BALANCE = '$_SESSION[prevbal]'+$ibal -$credit, CREDIT = CREDIT + $credit WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$BALANCE = mysql_query($query_BALANCE, $tryconnection) or die(mysql_error());
+			$BALANCE = mysqli_query($tryconnection, $query_BALANCE) or die(mysqli_error($mysqli_link));
 			
 
 		}
@@ -934,9 +934,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -945,11 +945,11 @@ BEGIN ;
 					$discount,
 					$zero,
 					$ibal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -959,9 +959,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_POST['ponum']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_POST['ponum']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -971,10 +971,10 @@ BEGIN ;
 					$zero,
 					$ibal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 	
 			$query_BALANCE = "UPDATE ARCUSTO SET BALANCE = '$_SESSION[prevbal]'+$ibal WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$BALANCE = mysql_query($query_BALANCE, $tryconnection) or die(mysql_error());
+			$BALANCE = mysqli_query($tryconnection, $query_BALANCE) or die(mysqli_error($mysqli_link));
 
 		}
 }//if ($row_PATIENT_CLIENT['CREDIT'] > 0 && $row_PATIENT_CLIENT['CREDIT'] < $itotal && array_sum($_SESSION['payments'])  == 0 )
@@ -999,14 +999,14 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][$key],
 					$discount,
 					$payment,
 					$row_invdatetime[0]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			
 			}//if ($_SESSION['methods'][$key]) != 'ONAC'){
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -1015,9 +1015,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1026,11 +1026,11 @@ BEGIN ;
 					$discount,
 					0,
 					$itotal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]'" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 		     
@@ -1042,9 +1042,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1054,14 +1054,14 @@ BEGIN ;
 					0, 
 					$itotal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 
 			
 			$ibalance = $itotal + $_SESSION['prevbal'] - array_sum($_SESSION['payments']) ;
 			$icredit = $icredit + $remainingpayment ;
 			
 			$query_CREDIT = "UPDATE ARCUSTO SET BALANCE=$ibalance, CREDIT=$icredit WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$CREDIT = mysql_query($query_CREDIT, $tryconnection) or die(mysql_error());
+			$CREDIT = mysqli_query($tryconnection, $query_CREDIT) or die(mysqli_error($mysqli_link));
 
   }
 } //if (array_sum($_SESSION['payments']) < $GrandTOTAL && array_sum($_SESSION['payments']) != $itotal){
@@ -1089,14 +1089,14 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][$key],
 					$discount,
 					$payment,
 					$row_invdatetime[0]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			
 			}//if ($_SESSION['methods'][$key]) != 'ONAC'){
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -1107,9 +1107,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1118,12 +1118,12 @@ BEGIN ;
 					$discount,
 					0,
 					$itotal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 			
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 		     
@@ -1135,9 +1135,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1147,14 +1147,14 @@ BEGIN ;
 					0, 
 					$itotal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 
 			
 			$ibalance = $itotal + $_SESSION['prevbal'] - array_sum($_SESSION['payments']) ;
 			$icredit = $icredit + $remainingpayment ;
 			
 			$query_CREDIT = "UPDATE ARCUSTO SET BALANCE=$ibalance, CREDIT=$icredit WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$CREDIT = mysql_query($query_CREDIT, $tryconnection) or die(mysql_error());
+			$CREDIT = mysqli_query($tryconnection, $query_CREDIT) or die(mysqli_error($mysqli_link));
  }
 }  //$itotal = 0 && array_sum($_SESSION['payments']) > $itotal
 /****************CASE 5C*******************/
@@ -1179,14 +1179,14 @@ BEGIN ;
 					'DEP.' ,
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][$key],
 					$discount,
 					$payment,
 					$row_invdatetime[0]);
-			mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 			
 			}//if ($_SESSION['methods'][$key]) != 'ONAC'){
 			}//foreach ($_SESSION['payments'] as $key => $payment)
@@ -1197,9 +1197,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1208,12 +1208,12 @@ BEGIN ;
 					$discount,
 					0,
 					$itotal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 			
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno]' LIMIT 1" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 		     
@@ -1224,9 +1224,9 @@ BEGIN ;
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1236,7 +1236,7 @@ BEGIN ;
 					0, 
 					$itotal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 
 			
 			$ibalance = $itotal + $_SESSION['prevbal'] - array_sum($_SESSION['payments']) ;
@@ -1245,7 +1245,7 @@ BEGIN ;
             $icredit = $row_PATIENT_CLIENT['CREDIT'] ;
             
 			$query_CREDIT = "UPDATE ARCUSTO SET BALANCE=$ibalance, CREDIT = $icredit + $remainingpayment  WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$CREDIT = mysql_query($query_CREDIT, $tryconnection) or die(mysql_error());
+			$CREDIT = mysqli_query($tryconnection, $query_CREDIT) or die(mysqli_error($mysqli_link));
   }
 }  //$itotal < 0 && array_sum($_SESSION['payments']) > 0 
 
@@ -1265,9 +1265,9 @@ else if (array_sum($_SESSION['payments']) == 0){
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1276,11 +1276,11 @@ else if (array_sum($_SESSION['payments']) == 0){
 					$discount,
 					array_sum($_SESSION['payments']),
 					$ibal);
-			mysql_query($insert_ARARECV, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARARECV) or die(mysqli_error($mysqli_link));
 			
 			// now get the unique number the system has assigned to this receivable, so that it can be put into the invoice record.
 		     $GET_UNIQUE1 = "SELECT UNIQUE1 FROM ARARECV WHERE INVNO = '$_SESSION[minvno] '" ;
-		     $FOR_INVOICE = mysql_query($GET_UNIQUE1, $tryconnection) or die(mysql_error()) ;
+		     $FOR_INVOICE = mysqli_query($tryconnection, $GET_UNIQUE1) or die(mysqli_error($mysqli_link)) ;
 		     $row_ARFORIN = mysqli_fetch_assoc($FOR_INVOICE) ;
 		     $uni = $row_ARFORIN['UNIQUE1'] ;
 
@@ -1290,9 +1290,9 @@ else if (array_sum($_SESSION['payments']) == 0){
 					$_SESSION['minvno'],
 					$row_invdatetime[0],
 					$_SESSION['client'],
-					mysql_real_escape_string($_POST['company']),
-					mysql_real_escape_string($_SESSION['staff']),
-					mysql_real_escape_string($_SESSION['petname']),
+					mysqli_real_escape_string($mysqli_link, $_POST['company']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['staff']),
+					mysqli_real_escape_string($mysqli_link, $_SESSION['petname']),
 					$_SESSION['methods'][0],
 					$row_invdatetime[0],
 					$GSTtotal,
@@ -1302,10 +1302,10 @@ else if (array_sum($_SESSION['payments']) == 0){
 					array_sum($_SESSION['payments']),
 					$ibal,
 					$uni);
-			mysql_query($insert_ARINVOI, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $insert_ARINVOI) or die(mysqli_error($mysqli_link));
 	
 			$query_BALANCE = "UPDATE ARCUSTO SET BALANCE = '$_SESSION[prevbal]' + $ibal WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
-			$BALANCE = mysql_query($query_BALANCE, $tryconnection) or die(mysql_error());
+			$BALANCE = mysqli_query($tryconnection, $query_BALANCE) or die(mysqli_error($mysqli_link));
  }
 }//else if (array_sum($_SESSION['payments']) == 0){
 
@@ -1317,11 +1317,11 @@ else if (array_sum($_SESSION['payments']) == 0){
            if (empty($row_dup)) {
            
 $query_AR = "SELECT SUM(IBAL) AS BALANCE FROM ARARECV WHERE CUSTNO = '$_SESSION[client]' AND IBAL > 0 " ;
-$ISAR = mysql_query($query_AR, $tryconnection) or die(mysql_error()) ;
+$ISAR = mysqli_query($tryconnection, $query_AR) or die(mysqli_error($mysqli_link)) ;
 $row_balance = mysqli_fetch_assoc($ISAR) ;
 $balance=$row_balance['BALANCE'] ;
 $query_CRED="SELECT CREDIT FROM ARCUSTO WHERE CUSTNO = '$_SESSION[client]' LIMIT 1" ;
-$ISCRED = mysql_query($query_CRED, $tryconnection) or die(mysql_error()) ;
+$ISCRED = mysqli_query($tryconnection, $query_CRED) or die(mysqli_error($mysqli_link)) ;
 $row_credit = mysqli_fetch_assoc($ISCRED) ;
 $credit=$row_credit['CREDIT'] ;
 
@@ -1333,7 +1333,7 @@ $credit=$row_credit['CREDIT'] ;
 		  $remainingpayment = $credit ;	
 		  $refno = 'DEP.AP.' ;
 		  $query_ARARECV2="SELECT * FROM ARARECV WHERE CUSTNO='$_SESSION[client]' AND IBAL > 0 ORDER BY INVDTE, UNIQUE1 ASC";
-				$ARARECV2=mysql_query($query_ARARECV2, $tryconnection) or die(mysql_error());
+				$ARARECV2=mysqli_query($tryconnection, $query_ARARECV2) or die(mysqli_error($mysqli_link));
 				$row_ARARECV2=mysqli_fetch_assoc($ARARECV2);
 // and AUTOPAY
 				do {
@@ -1349,35 +1349,35 @@ $credit=$row_credit['CREDIT'] ;
 					if ($amtpaid > 0) {
 					$update_ARARECV2="UPDATE ARARECV SET AMTPAID=AMTPAID+$amtpaid, IBAL=(IBAL-$amtpaid), DTEPAID='$row_invdatetime[0]',
 					     REFNO = '$refno' WHERE INVNO='$row_ARARECV2[INVNO]' AND UNIQUE1 = '$row_ARARECV2[UNIQUE1]' LIMIT 1";
-					mysql_query($update_ARARECV2, $tryconnection) or die(mysql_error());
+					mysqli_query($tryconnection, $update_ARARECV2) or die(mysqli_error($mysqli_link));
 				
 					$insert_ARCASHR = sprintf("INSERT INTO ARCASHR (INVNO, INVDTE, CUSTNO, COMPANY, SALESMN, PONUM, DISCOUNT, AMTPAID, DTEPAID, REFNO) 
 					VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 							$row_ARARECV2['INVNO'],
 							$row_ARARECV2['INVDTE'],
 							$row_ARARECV2['CUSTNO'],
-							mysql_real_escape_string($row_ARARECV2['COMPANY']),
-							mysql_real_escape_string($_POST['salesmn']),
-							mysql_real_escape_string($row_ARARECV2['PONUM']),
+							mysqli_real_escape_string($mysqli_link, $row_ARARECV2['COMPANY']),
+							mysqli_real_escape_string($mysqli_link, $_POST['salesmn']),
+							mysqli_real_escape_string($mysqli_link, $row_ARARECV2['PONUM']),
 							$row_ARARECV2['DISCOUNT'],
 							$amtpaid,
 							$row_invdatetime[0],
 							$refno);
-					mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+					mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 					
 					$insert_ARCASHR = sprintf("INSERT INTO ARCASHR (INVNO, INVDTE, CUSTNO, COMPANY, SALESMN, PONUM, DISCOUNT, AMTPAID, DTEPAID, REFNO) 
 					VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 							$row_ARARECV2['INVNO'],
 							$row_ARARECV2['INVDTE'],
 							$row_ARARECV2['CUSTNO'],
-							mysql_real_escape_string($row_ARARECV2['COMPANY']),
-							mysql_real_escape_string($_POST['salesmn']),
-							mysql_real_escape_string($row_ARARECV2['PONUM']),
+							mysqli_real_escape_string($mysqli_link, $row_ARARECV2['COMPANY']),
+							mysqli_real_escape_string($mysqli_link, $_POST['salesmn']),
+							mysqli_real_escape_string($mysqli_link, $row_ARARECV2['PONUM']),
 							$row_ARARECV2['DISCOUNT'],
 							-$amtpaid,
 							$row_invdatetime[0],
 							$refno);
-					mysql_query($insert_ARCASHR, $tryconnection) or die(mysql_error());
+					mysqli_query($tryconnection, $insert_ARCASHR) or die(mysqli_error($mysqli_link));
 
 					$remainingpayment=$remainingpayment - $amtpaid;
 
@@ -1386,7 +1386,7 @@ $credit=$row_credit['CREDIT'] ;
 			
 			
 			$update_ARCUSTO = "UPDATE ARCUSTO SET CREDIT='$remainingpayment' WHERE CUSTNO='$_SESSION[client]' LIMIT 1 ";
-			$RESULT = mysql_query($update_ARCUSTO, $tryconnection) or die(mysql_error());
+			$RESULT = mysqli_query($tryconnection, $update_ARCUSTO) or die(mysqli_error($mysqli_link));
 			
 }
 
@@ -1401,7 +1401,7 @@ $insert_ARGST=sprintf("INSERT INTO ARGST (INVNO, INVDTE, CUSTNO, ITOTAL, GST, PR
 		$PSTtotal,
 		$row_CRITDATA['HGSTNO'],
 		$uni);
-mysql_query($insert_ARGST, $tryconnection) or die(mysql_error());
+mysqli_query($tryconnection, $insert_ARGST) or die(mysqli_error($mysqli_link));
 
 
 
@@ -1424,9 +1424,9 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVGST, INVTAX, 
 					$value2['INVGST'],
 					$value2['INVTAX'],
 					$value2['INVDISC'],
-					mysql_real_escape_string($value2['INVDOC']),
-					mysql_real_escape_string($value2['INVDOC']),
-					mysql_real_escape_string($value2['INVDESCR']),
+					mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+					mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+					mysqli_real_escape_string($mysqli_link, $value2['INVDESCR']),
 					$value2['INVLGSM'],
 					$value2['INVREVCAT'],
 					$row_invdatetime[0],
@@ -1437,7 +1437,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVGST, INVTAX, 
 					$value2['INVSTAT'],
 					$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 $hxcats[]=$value2['INVHXCAT'];
 $petids[]=$value2['INVPET'];
 
@@ -1453,11 +1453,11 @@ VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '
 							  $row_invdatetime[0],
 							  $value2['INVMAJ'],
 							  $value2['INVMIN'],
-							  mysql_real_escape_string($value2['INVDOC']),
-							  mysql_real_escape_string($value2['INVDOC']),
-							  mysql_real_escape_string($value2['INVSTAFF']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVDOC']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVSTAFF']),
 							  $value2['INVUNITS'],
-							  mysql_real_escape_string($value2['INVDESCR']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVDESCR']),
 							  $value2['INVPRICE'],
 							  $value2['INVTOT'],
 							  $value2['INVREVCAT'],
@@ -1469,10 +1469,10 @@ VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '
 							  $value2['INARCLOG'],
 							  $value2['IUAC'],
 							  $value2['INVDECLINE'],
-							  mysql_real_escape_string($value2['PETNAME']),
+							  mysqli_real_escape_string($mysqli_link, $value2['PETNAME']),
 							  $value2['INVPRU'],
-							  mysql_real_escape_string($value2['INVOICECOMMENT']),
-							  mysql_real_escape_string($value2['LCOMMENT']),
+							  mysqli_real_escape_string($mysqli_link, $value2['INVOICECOMMENT']),
+							  mysqli_real_escape_string($mysqli_link, $value2['LCOMMENT']),
 					          $value2['INVLGSM'],
 					          $value2['INVNOHST'],
 					          $value2['INVSTAT'],
@@ -1486,13 +1486,13 @@ mysql_unbuffered_query($insertSQL2, $tryconnection);
 
 ///////////////////////////////////SOLD LIST and Inventory "Last Sale" and onhand updates /////////////////////////////////////////////////////
 	if (!empty($value2['INVVPC'])){
-	$insert_INVSOLD = "INSERT INTO INVSOLD (INVVPC, INVDESC, INVUNITS) VALUES ('$value2[INVVPC]', '".mysql_real_escape_string($value2['INVDESCR'])."', '$value2[INVUNITS]')";
-	$INVSOLD = mysql_query($insert_INVSOLD) or die(mysql_error());
+	$insert_INVSOLD = "INSERT INTO INVSOLD (INVVPC, INVDESC, INVUNITS) VALUES ('$value2[INVVPC]', '".mysqli_real_escape_string($mysqli_link, $value2['INVDESCR'])."', '$value2[INVUNITS]')";
+	$INVSOLD = mysqli_query($mysqli_link, $insert_INVSOLD) or die(mysqli_error($mysqli_link));
 	$VPC = $value2['INVVPC'] ;
 	$update_INV = "UPDATE ARINVT SET LASTSALE = DATE(NOW()) WHERE VPARTNO = '$VPC'  LIMIT 1" ; 
-	$INVENTORY = mysql_query($update_INV, $tryconnection) or die(mysql_error()) ;
+	$INVENTORY = mysqli_query($tryconnection, $update_INV) or die(mysqli_error($mysqli_link)) ;
 	$update_INV2 = "UPDATE ARINVT SET ONHAND = ONHAND - '$value2[INVUNITS]'  WHERE VPARTNO = '$VPC' AND MONITOR = 1 LIMIT 1" ; 
-	$INVENTORY2 = mysql_query($update_INV2, $tryconnection) or die(mysql_error()) ;
+	$INVENTORY2 = mysqli_query($tryconnection, $update_INV2) or die(mysqli_error($mysqli_link)) ;
 	}
 //////////////////////////////////////////////////////////////////////////////
 // Here are the patient updates
@@ -1500,12 +1500,12 @@ if (!empty($value2['INVFLAGS'])){
 	
 	if(substr($value2['INVFLAGS'],15,1)){ //Annual exam,no years
 	$update_DATES = "UPDATE PETMAST SET POTH8='$row_invdatetime[0]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  //$_SESSION['prtcertificate4']='4';
 	 }
 	if(substr($value2['INVFLAGS'],5,1)){ //Heartworm, years default to 1
 	$update_DATES = "UPDATE PETMAST SET POTHFOR='$row_invdatetime[0]', POTH04YEARS='1' WHERE  PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	 //$_SESSION['prtcertificate']='1';
 	 } 
 	 
@@ -1517,7 +1517,7 @@ if (!empty($value2['INVFLAGS'])){
 	 }
 	$rabserum=explode("(",$value2['INVDESCR']);
 	$update_DATES = "UPDATE PETMAST SET PRABDAT='$row_invdatetime[0]', PRABYEARS='$years[1]', PRABSER='$rabserum[0]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	 $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
@@ -1527,12 +1527,12 @@ if (!empty($value2['INVFLAGS'])){
 	$rabtag=explode(' ',$value2['INVDESCR']);
 	$rabtag=array_reverse($rabtag);
 	$update_DATES = "UPDATE PETMAST SET PRABLAST = PRABTAG, PRABTAG='$rabtag[0]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());	
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));	
 	}  
 	  
 	if(substr($value2['INVFLAGS'],6,1)){//fecal, no years
 	$update_DATES = "UPDATE PETMAST SET POTHFIV='$row_invdatetime[0]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  }
 	  
 	if (substr($value2['INVFLAGS'],1,1) == 1 && strpos($value2['INVDESCR'], " Dur ") > 1 ) {  //Da2P, FVRCP for dogs and cats, others for other species.
@@ -1543,7 +1543,7 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ;
 	 }
 	$update_DATES = "UPDATE PETMAST SET POTHDAT='$row_invdatetime[0]', POTHYEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	// check for the kitten and puppies vacount flags.
 	$is_PUPKIT = $row_PATIENT_CLIENT['PVACOUNT'] ;
 	  if ($is_PUPKIT < 3) {
@@ -1558,7 +1558,7 @@ if (!empty($value2['INVFLAGS'])){
 			if ($diff < 155) { 
 			$is_PUPKIT++ ;
 			$update_PVACOUNT = "UPDATE PETMAST SET PVACOUNT = '$is_PUPKIT' WHERE PETID='$value2[INVPET]' LIMIT 1" ;
-			mysql_query($update_PVACOUNT, $tryconnection) or die(mysql_error()) ;			
+			mysqli_query($tryconnection, $update_PVACOUNT) or die(mysqli_error($mysqli_link)) ;			
 			} 
 	   }
 	  $_SESSION['prtcertificate']='1';
@@ -1567,7 +1567,7 @@ if (!empty($value2['INVFLAGS'])){
 	  } 
 	if(substr($value2['INVFLAGS'],13,1)){// neuter, no years
 	$update_DATES = "UPDATE PETMAST SET PNEUTER='1' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate2']='2';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids2'])){
 	 $_SESSION['certifpetids2'][]=$value2['INVPET'];}
@@ -1580,7 +1580,7 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ; 
 	 }
 	$update_DATES = "UPDATE PETMAST SET PLEUKDAT='$row_invdatetime[0]', PLEUKYEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
@@ -1596,7 +1596,7 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ;
 	 }
 	$update_DATES = "UPDATE PETMAST SET POTHTWO='$row_invdatetime[0]', POTH02YEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
@@ -1604,7 +1604,7 @@ if (!empty($value2['INVFLAGS'])){
 	if(substr($value2['INVFLAGS'],11,1)){  //Microchip
 	$tatno=explode(' ',$value2['INVDESCR']);
 	$update_DATES = "UPDATE PETMAST SET PTATNO='$tatno[0]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  } 
 	if(substr($value2['INVFLAGS'],4,1)== 1 && strpos($value2['INVDESCR'], " Dur ") > 0){//Parvo, FIP
 	$years=explode(' ',$value2['INVDESCR']);
@@ -1613,7 +1613,7 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ;
 	 }
 	$update_DATES = "UPDATE PETMAST SET POTHTHR='$row_invdatetime[0]', POTH03YEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
@@ -1621,7 +1621,7 @@ if (!empty($value2['INVFLAGS'])){
 	if(substr($value2['INVFLAGS'],14,1)){
 	$pweight=explode(' ',$value2['INVDESCR']);
 	$update_DATES = "UPDATE PETMAST SET PWEIGHT='$pweight[0]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  } 
 	if(substr($value2['INVFLAGS'],7,1)==1  &&  strpos($value2['INVDESCR'], " Dur ") > 1){//Bordetella, FIV
 	$years=explode(' ',$value2['INVDESCR']);
@@ -1630,19 +1630,19 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ;
 	 }
 	$update_DATES = "UPDATE PETMAST SET POTHSIX='$row_invdatetime[0]', POTH06YEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
 	  } 
 	if(substr($value2['INVFLAGS'],8,1)){ //neuter
 	$update_DATES = "UPDATE PETMAST SET PNEUTER='1' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate2']='2';
 	  } 
 	if(substr($value2['INVFLAGS'],9,1)){ //deceased
 	$update_DATES = "UPDATE PETMAST SET PDEADATE='$row_invdatetime[0]', PDEAD='1' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 //	  $_SESSION['prtcertificate3']='3';
 	  } 
 	if(substr($value2['INVFLAGS'],12,1)){//Lyme,Declaw,Magnet
@@ -1650,18 +1650,18 @@ if (!empty($value2['INVFLAGS'])){
 	        $years=explode(' ',$value2['INVDESCR']);
 	        $years=array_reverse($years);
 			$update_DATES = "UPDATE PETMAST SET POTHSEV='$row_invdatetime[0]', POTH07YEARS ='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-			mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+			mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 			$_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
 			}
 		else if ($value2['INVLGSM']=='2'){
 			$update_DATES = "UPDATE PETMAST SET PDECLAW='1' WHERE PETID='$value2[INVPET]' LIMIT 1";
-			mysql_query($update_DATES, $tryconnection) or die(mysql_error());			
+			mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));			
 			}
 		else if ($value2['INVLGSM']=='4'){
 			$update_DATES = "UPDATE PETMAST SET PMAGNET='1' WHERE PETID='$value2[INVPET]' LIMIT 1";
-			mysql_query($update_DATES, $tryconnection) or die(mysql_error());			
+			mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));			
 			}
 	  } 
 	if(substr($value2['INVFLAGS'],16,1) == 1 && strpos($value2['INVDESCR'], " Dur ") > 0){//Distemper
@@ -1671,7 +1671,7 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ;
 	 }
 	$update_DATES = "UPDATE PETMAST SET POTH9='$row_invdatetime[0]', POTH09YEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
@@ -1683,7 +1683,7 @@ if (!empty($value2['INVFLAGS'])){
 	$years[1] = 1 ;
 	 }
 	$update_DATES = "UPDATE PETMAST SET POTH10='$row_invdatetime[0]', POTH10YEARS='$years[1]' WHERE PETID='$value2[INVPET]' LIMIT 1";
-	mysql_query($update_DATES, $tryconnection) or die(mysql_error());
+	mysqli_query($tryconnection, $update_DATES) or die(mysqli_error($mysqli_link));
 	  $_SESSION['prtcertificate']='1';
 	 if (!in_array($value2['INVPET'],$_SESSION['certifpetids'])){
 	 $_SESSION['certifpetids'][]=$value2['INVPET'];}
@@ -1709,7 +1709,7 @@ $insertSQL3 = sprintf("INSERT INTO DVMINV (INVNO, INVCUST, INVPET, INVDATETIME, 
 							  "996",
 							  $uni
 							  );
-mysql_query($insertSQL3, $tryconnection) or die(mysql_error());
+mysqli_query($tryconnection, $insertSQL3) or die(mysqli_error($mysqli_link));
 
 $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, INVCUST, INVDESC, INVREVCAT,INVDECLINE,UNIQUE1) VALUES ('%s','%s','%s','%s','%s','%s', '%s', '0', '%s')",
 					"96",
@@ -1721,7 +1721,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, I
 					"96",
 					$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 
 }
 
@@ -1740,7 +1740,7 @@ $insertSQL3 = sprintf("INSERT INTO DVMINV (INVNO, INVCUST, INVPET, INVDATETIME, 
 							  "997",
 							  $uni
 							  );
-mysql_query($insertSQL3, $tryconnection)  or die(mysql_error());
+mysqli_query($tryconnection, $insertSQL3)  or die(mysqli_error($mysqli_link));
 
 $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, INVCUST, INVDESC, INVREVCAT, INVDECLINE, UNIQUE1) VALUES ('%s','%s','%s','%s','%s', '%s', '%s', '0', '%s')",
 					"92",
@@ -1752,7 +1752,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, I
 					"92",
 					$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 }//if ($ptax>0)
 
 //GST
@@ -1769,7 +1769,7 @@ $insertSQL3 = sprintf("INSERT INTO DVMINV (INVNO, INVCUST, INVPET, INVDATETIME, 
 							  "998",
 							  $uni
 							  );
-mysql_query($insertSQL3, $tryconnection)  or die(mysql_error());
+mysqli_query($tryconnection, $insertSQL3)  or die(mysqli_error($mysqli_link));
 
 $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, INVCUST, INVDESC, INVDECLINE, INVREVCAT, UNIQUE1) VALUES ('%s','%s','%s','%s','%s', '%s','0', '%s', '%s')",
 					"90",
@@ -1781,7 +1781,7 @@ $insert_SALESCAT=sprintf("INSERT INTO SALESCAT (INVMAJ, INVTOT, INVDTE, INVNO, I
 					"90",
 					$uni
 					);
-$result=mysql_query($insert_SALESCAT, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_SALESCAT) or die(mysqli_error($mysqli_link));
 
 
 COMMIT ;
@@ -1790,18 +1790,18 @@ COMMIT ;
 
 ///////////////////////////////////HISTORY/////////////////////////////////////////////////////
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
 $row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$_SESSION['client']/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
 
 	$query_CHECKTABLE="SELECT * FROM $treatmxx LIMIT 1";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	$create_TREATMXX="CREATE TABLE $treatmxx LIKE TREATM0";
-	$result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	$result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	}
 
 $petids=array_unique($petids);
@@ -1814,11 +1814,11 @@ $sumhxcats=(array_sum($hxcats)+8192);
 foreach ($petids as $pet){
 //DELETE FROM RECEP FILE
 $query_discharge="DELETE FROM RECEP WHERE RFPETID='$pet'";
-$discharge=mysql_query($query_discharge,$tryconnection) or die(mysql_error());
+$discharge=mysqli_query($tryconnection, $query_discharge) or die(mysqli_error($mysqli_link));
 
 //insert the heading with the invoice #
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','INVOICE #$value2[INVNO]', $sumhxcats,'61', '".mysql_real_escape_string($value2['INVDOC'])."', '$row_invdatetime[0]')";
-mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','INVOICE #$value2[INVNO]', $sumhxcats,'61', '".mysqli_real_escape_string($mysqli_link, $value2['INVDOC'])."', '$row_invdatetime[0]')";
+mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 
 $subtotalcomment=array();
 
@@ -1829,8 +1829,8 @@ $subtotalcomment=array();
 		
 		//if it is a serums
 		if ($item['INVSERUM']=='2'){
-		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysql_real_escape_string($item['INVDESCR'])."', $hcat,'64','$item[INVMAJ]', '".mysql_real_escape_string($item['INVSTAFF'])."', '$row_invdatetime[0]')";
-	mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysqli_real_escape_string($mysqli_link, $item['INVDESCR'])."', $hcat,'64','$item[INVMAJ]', '".mysqli_real_escape_string($mysqli_link, $item['INVSTAFF'])."', '$row_invdatetime[0]')";
+	mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 		}//if ($item['INVSERUM']=='2')
 		else {	
 		//format units into no-decimal number when it's XX.00
@@ -1848,23 +1848,23 @@ $subtotalcomment=array();
 		
 		//if it is an inline note
 		if ($item['MEMO']=='1'){ 
-		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysql_real_escape_string($item['INVDESCR'])."', $hcat,'66','$item[INVMAJ]', '".mysql_real_escape_string($item['INVSTAFF'])."', '$row_invdatetime[0]')";
-	mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysqli_real_escape_string($mysqli_link, $item['INVDESCR'])."', $hcat,'66','$item[INVMAJ]', '".mysqli_real_escape_string($mysqli_link, $item['INVSTAFF'])."', '$row_invdatetime[0]')";
+	mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 		}
 		//if it is a declined item
 		else if ($item['INVDECLINE']=='1'){
-		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysql_real_escape_string($treatdesc)."', $hcat,'67','$item[INVMAJ]', '".mysql_real_escape_string($item['INVDOC'])."', '$row_invdatetime[0]')";
-		mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysqli_real_escape_string($mysqli_link, $treatdesc)."', $hcat,'67','$item[INVMAJ]', '".mysqli_real_escape_string($mysqli_link, $item['INVDOC'])."', '$row_invdatetime[0]')";
+		mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 		}
 		else {// if it is an invoice item with a $ value 		
-		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysql_real_escape_string($treatdesc)."', $hcat,'$hsubcat','$item[INVMAJ]', '".mysql_real_escape_string($item['INVSTAFF'])."', '$row_invdatetime[0]')";
-		mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysqli_real_escape_string($mysqli_link, $treatdesc)."', $hcat,'$hsubcat','$item[INVMAJ]', '".mysqli_real_escape_string($mysqli_link, $item['INVSTAFF'])."', '$row_invdatetime[0]')";
+		mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 		}
 		}
 		//label
 		if ($item['INVPRU']=='1' && !empty($item['LCOMMENT'])){
-		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysql_real_escape_string($item['LCOMMENT'])."', $hcat,'63','$item[INVMAJ]', '".mysql_real_escape_string($item['INVSTAFF'])."', '$row_invdatetime[0]')";
-	mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, HTMAJ, WHO, TREATDATE) VALUES ('$item[INVCUST]','$item[INVPET]','".mysqli_real_escape_string($mysqli_link, $item['LCOMMENT'])."', $hcat,'63','$item[INVMAJ]', '".mysqli_real_escape_string($mysqli_link, $item['INVSTAFF'])."', '$row_invdatetime[0]')";
+	mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 		}
 	
 		//subtotal comment
@@ -1886,13 +1886,13 @@ $subtotalcomment=array();
 
 	//insert collected subtotal comments (65)
 	foreach ($subtotalcomment as $subtcom){
-		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$item[INVCUST]','$pet','".mysql_real_escape_string($subtcom)."', $sumhxcats,'65', '".mysql_real_escape_string($value2['INVSTAFF'])."', '$row_invdatetime[0]')";
-		mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+		$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$item[INVCUST]','$pet','".mysqli_real_escape_string($mysqli_link, $subtcom)."', $sumhxcats,'65', '".mysqli_real_escape_string($mysqli_link, $value2['INVSTAFF'])."', '$row_invdatetime[0]')";
+		mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 		}
 	 
 	if ($pet > 0) {
 		$query_PETHOLD = "SELECT * FROM PETHOLD WHERE PHPETID=$pet AND MEDINV='1'";
-		$PETHOLD = mysql_query($query_PETHOLD, $tryconnection) or die(mysql_error());
+		$PETHOLD = mysqli_query($tryconnection, $query_PETHOLD) or die(mysqli_error($mysqli_link));
 		$row_PETHOLD = mysqli_fetch_assoc($PETHOLD);
 			if (!empty($row_PETHOLD['SUBTCOM'])){
 			$splitasterisks=explode('*',$row_PETHOLD['SUBTCOM']);
@@ -1909,16 +1909,16 @@ $subtotalcomment=array();
 				}
 				
 				foreach ($subtotalcomment as $subtcom){
-				$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$item[INVCUST]','$pet','".mysql_real_escape_string($subtcom)."', $sumhxcats,'65', '".mysql_real_escape_string($value2['INVSTAFF'])."', '$row_invdatetime[0]')";
-				mysql_query($insertSQL, $tryconnection)  or die(mysql_error());
+				$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$item[INVCUST]','$pet','".mysqli_real_escape_string($mysqli_link, $subtcom)."', $sumhxcats,'65', '".mysqli_real_escape_string($mysqli_link, $value2['INVSTAFF'])."', '$row_invdatetime[0]')";
+				mysqli_query($tryconnection, $insertSQL)  or die(mysqli_error($mysqli_link));
 				}//foreach ($subtotalcomment as $subtcom)
 			  }
 			
 			}//if (!empty($row_PETHOLD['SUBTCOM']))
 $query_PLASTDATE = "UPDATE PETMAST SET PLASTDATE=NOW() WHERE PETID=$pet LIMIT 1";
-$PLASTDATE = mysql_query($query_PLASTDATE, $tryconnection) or die(mysql_error());
+$PLASTDATE = mysqli_query($tryconnection, $query_PLASTDATE) or die(mysqli_error($mysqli_link));
 $query_INVNO_PETHOLD = "UPDATE PETHOLD SET PHINVNO='$_SESSION[minvno]' WHERE PHPETID=$pet";
-$INVNO_PETHOLD = mysql_query($query_INVNO_PETHOLD, $tryconnection) or die(mysql_error());
+$INVNO_PETHOLD = mysqli_query($tryconnection, $query_INVNO_PETHOLD) or die(mysqli_error($mysqli_link));
 //$query_PETHOLD = "DELETE FROM PETHOLD WHERE PHPETID=$pet";
 //$PETHOLD = mysql_query($query_PETHOLD, $tryconnection) or die(mysql_error());
 } // if $pet > 0 
@@ -1926,26 +1926,26 @@ $INVNO_PETHOLD = mysql_query($query_INVNO_PETHOLD, $tryconnection) or die(mysql_
 
 //delete from INVHOLD
 $lock_it = "LOCK TABLES INVHOLD WRITE, RECEP WRITE, ARCUSTO WRITE" ;  
-$Qlock = mysql_query($lock_it, $tryconnection) or die(mysql_error()) ;
+$Qlock = mysqli_query($tryconnection, $lock_it) or die(mysqli_error($mysqli_link)) ;
 $deleteSQL = "DELETE  FROM INVHOLD WHERE INVCUST='$_SESSION[client]'";
-mysql_query($deleteSQL, $tryconnection)  or die(mysql_error());
+mysqli_query($tryconnection, $deleteSQL)  or die(mysqli_error($mysqli_link));
 $optimize = "OPTIMIZE TABLE INVHOLD";
-mysql_query($optimize, $tryconnection)  or die(mysql_error());
+mysqli_query($tryconnection, $optimize)  or die(mysqli_error($mysqli_link));
 
 
 //OPTIMIZE RECEP AFTER DELETION OF THE PETS
 $query_optimize="OPTIMIZE TABLE RECEP ";
-$optimize=mysql_query($query_optimize, $tryconnection) or die(mysql_error());
+$optimize=mysqli_query($tryconnection, $query_optimize) or die(mysqli_error($mysqli_link));
 if (array_sum($_SESSION['payments']) == 0){
   $query_LOCK = "UPDATE ARCUSTO SET LOCKED='0', LDATE = '$row_invdatetime[0]' WHERE CUSTNO = '$_SESSION[client]' LIMIT 1"; }
 else {
   $query_LOCK = "UPDATE ARCUSTO SET LOCKED='0', LDATE = '$row_invdatetime[0]', LASTPAY = '$row_invdatetime[0]' WHERE CUSTNO = '$_SESSION[client]' LIMIT 1";
 }
-$LOCK = mysql_query($query_LOCK, $tryconnection) or die(mysql_error());
+$LOCK = mysqli_query($tryconnection, $query_LOCK) or die(mysqli_error($mysqli_link));
 
 
 $unlock_it = "UNLOCK TABLES" ;
-$Qunlock = mysql_query($unlock_it, $tryconnection) or die(mysql_error()) ;
+$Qunlock = mysqli_query($tryconnection, $unlock_it) or die(mysqli_error($mysqli_link)) ;
 //unset($_SESSION['payments']) ;
 }
 	if (isset($_POST['prtsave'])){

@@ -2,9 +2,9 @@
 session_start(); 
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_HXFILTER2 = "SELECT * FROM HXFILTER WHERE HXGROUP='2'";
-$HXFILTER2 = mysql_query($query_HXFILTER2, $tryconnection) or die(mysql_error());
+$HXFILTER2 = mysqli_query($tryconnection, $query_HXFILTER2) or die(mysqli_error($mysqli_link));
 $row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2);
 
 
@@ -59,7 +59,7 @@ if (document.more_filter.Obj.checked){
 	}
 	
 <?php 
-$HXFILTER2 = mysql_query($query_HXFILTER2, $tryconnection) or die(mysql_error());
+$HXFILTER2 = mysqli_query($tryconnection, $query_HXFILTER2) or die(mysqli_error($mysqli_link));
 $row_HXFILTER2 = mysqli_fetch_assoc($HXFILTER2);
 
 do{

@@ -55,48 +55,48 @@ else{
 $sortby = $_SESSION['sortingrf'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 // Check to see if auto rollover of appointments has happened. If not. do so...
 
 $has_Auto = "SELECT AUTOROLL FROM CRITDATA LIMIT 1 " ;
-$query_Auto = mysql_query($has_Auto, $tryconnection) or die(mysql_error()) ;
+$query_Auto = mysqli_query($tryconnection, $has_Auto) or die(mysqli_error($mysqli_link)) ;
 $row_Auto = mysqli_fetch_array($query_Auto) ;
 $autodate = $row_Auto['AUTOROLL'] ;
 
 $today = "SELECT DATE(NOW()) AS DATE ";
-$query_date = mysql_query($today, $tryconnection) or die(mysql_error()) ;
+$query_date = mysqli_query($tryconnection, $today) or die(mysqli_error($mysqli_link)) ;
 $row_date = mysqli_fetch_array($query_date) ;
 $date = $row_date['DATE'] ;
 
 if ($autodate < $date ) {
  $anti_lock = "UPDATE ARCUSTO SET LOCKED = 0 " ;
- $query_lock = mysql_query($anti_lock, $tryconnection) or die(mysql_error())  ;
+ $query_lock = mysqli_query($tryconnection, $anti_lock) or die(mysqli_error($mysqli_link))  ;
  $update_CRITDATA = "UPDATE CRITDATA SET AUTOROLL = '$date' LIMIT 1" ;
- $query_CRITDATA = mysql_query($update_CRITDATA, $tryconnection) or die(mysql_error()) ;
+ $query_CRITDATA = mysqli_query($tryconnection, $update_CRITDATA) or die(mysqli_error($mysqli_link)) ;
  
  $Auto_roll = "INSERT INTO RECEP (CUSTNO,NAME,RFPETID,PETNAME,RFPETTYPE,LOCATION,DESCRIP,PSEX,FNAME,PROBLEM,AREA1,PH1,AREA2,PH2,AREA3,PH3,BUSEXT,DATEIN,TIME,
                 CLINICIAN) SELECT CUSTNO,NAME,PETID,PETNAME,RFPETTYPE,'1',DESCRIP,PSEX,CONTACT,PROBLEM,CAREA,PHONE1,CAREA2,PHONE2,CAREA3,PHONE3,BUSEXT,DATEOF,TIMEOF,
                 SHORTDOC FROM APPTS WHERE DATEOF = '$date' AND CANCELLED <> 1 AND NOT EXISTS (SELECT RFPETID FROM RECEP WHERE RECEP.RFPETID = APPTS.PETID  AND RECEP.DATEIN = '$date' )" ;
                 
- $update_it = mysql_query($Auto_roll, $tryconnection) or die(mysql_error()) ;
+ $update_it = mysqli_query($tryconnection, $Auto_roll) or die(mysqli_error($mysqli_link)) ;
 }
 
 $query_WAITING = "SELECT *, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE LOCATION=1 ORDER BY $sortby ASC";
-$WAITING = mysql_query($query_WAITING, $tryconnection) or die(mysql_error());
+$WAITING = mysqli_query($tryconnection, $query_WAITING) or die(mysqli_error($mysqli_link));
 $row_WAITING = mysqli_fetch_assoc($WAITING);
 
 $query_ADMITTED = "SELECT *, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE LOCATION=2 ORDER BY $sortby ASC";
-$ADMITTED = mysql_query($query_ADMITTED, $tryconnection) or die(mysql_error());
+$ADMITTED = mysqli_query($tryconnection, $query_ADMITTED) or die(mysqli_error($mysqli_link));
 $row_ADMITTED = mysqli_fetch_assoc($ADMITTED);
 
 $query_DISCHARGED = "SELECT *, DATE_FORMAT(DATEIN, '%a %e') AS DATEIN FROM RECEP WHERE LOCATION=3 ORDER BY $sortby ASC";
-$DISCHARGED = mysql_query($query_DISCHARGED, $tryconnection) or die(mysql_error());
+$DISCHARGED = mysqli_query($tryconnection, $query_DISCHARGED) or die(mysqli_error($mysqli_link));
 $row_DISCHARGED = mysqli_fetch_assoc($DISCHARGED);
 
 if (isset($_GET['recepid'])){
 $query_delete="DELETE FROM RECEP WHERE RECEPID=".substr($_GET['recepid'],1);
-$delete=mysql_query($query_delete,$tryconnection) or die(mysql_error());
+$delete=mysqli_query($tryconnection, $query_delete) or die(mysqli_error($mysqli_link));
 header("Location: RECEPTION_FILE.php?ref=DEL");
 }
 
@@ -110,8 +110,8 @@ $rfpettype=$_POST['pettype'];
 	$_SESSION['patient']=$patient;
 	
 	include('../ASSETS/photo_directory.php');
-	$fileused=mysql_real_escape_string($custname);
-	$openpage="openpage('$patient', '".mysql_real_escape_string($custname)."', '$custphone', '".mysql_real_escape_string($petname)."', '".mysql_real_escape_string($desco)."', '".mysql_real_escape_string($desct)."', '$custprevbal', '$custcurbal', '$custterm', '$psex', '$pdob', '$rfpettype','".mysql_real_escape_string($address)."','".mysql_real_escape_string($city)."');";	
+	$fileused=mysqli_real_escape_string($mysqli_link, $custname);
+	$openpage="openpage('$patient', '".mysqli_real_escape_string($mysqli_link, $custname)."', '$custphone', '".mysqli_real_escape_string($mysqli_link, $petname)."', '".mysqli_real_escape_string($mysqli_link, $desco)."', '".mysqli_real_escape_string($mysqli_link, $desct)."', '$custprevbal', '$custcurbal', '$custterm', '$psex', '$pdob', '$rfpettype','".mysqli_real_escape_string($mysqli_link, $address)."','".mysqli_real_escape_string($mysqli_link, $city)."');";	
 	}//if ($_POST['check']=='1')
 }//if (isset($_POST['check']))
 
@@ -143,7 +143,7 @@ document.getElementById('title').innerText="RECEPTION SCREEN FOR "+sessionStorag
 function bodyonload(){
 <?php echo $goindex; ?>
 
-sessionStorage.setItem('fileused','<?php echo mysql_real_escape_string(substr($fileused,0,25)); ?>');
+sessionStorage.setItem('fileused','<?php echo mysqli_real_escape_string(0,25), substr($fileused); ?>');
 sessionStorage.setItem('filetype','C');
 
 document.getElementById('inuse').innerText=localStorage.xdatabase;
@@ -422,11 +422,11 @@ echo  '<tr heigth"15" class="Verdana11" id="'.$row_WAITING['RECEPID'].'"  onmous
 // that highlights the gender of the patient
 
 echo  '\')" onmouseout="whiteoutline(this.id);" ondblclick="openquery(\''.$row_WAITING['RFPETTYPE'].'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'1\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')" >
-<td class="Courier11" width="50" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">'.$row_WAITING['DATEIN'].'</td>
+<td class="Courier11" width="50" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">'.$row_WAITING['DATEIN'].'</td>
 <td width="60" align="left"';
 		
 		if ($ref=="DEL"){echo "style='display:none'";}
-echo	'onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">';
+echo	'onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">';
 
 if (substr($row_WAITING['CLINICIAN'],0,3)=='Dr.'){echo substr($row_WAITING['CLINICIAN'],4,8);} else {echo substr($row_WAITING['CLINICIAN'],0,9);}
 
@@ -440,10 +440,10 @@ echo 	'</td>
 echo	'onclick="deletion(\'a'. $row_WAITING['RECEPID'].'\')" onmouseover="CursorToPointer(this.id);">
 X
 </td>
-<td width="120" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''. $row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')" >'.$row_WAITING['NAME'].",&nbsp;".$row_WAITING['FNAME'].'</td>
-<td width="100" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">'.$row_WAITING['PETNAME'].'</td>
-<td width="140" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''. $row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">'.$row_WAITING['DESCRIP'].'</td>
-<td onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')"><span ';
+<td width="120" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''. $row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')" >'.$row_WAITING['NAME'].",&nbsp;".$row_WAITING['FNAME'].'</td>
+<td width="100" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">'.$row_WAITING['PETNAME'].'</td>
+<td width="140" onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''. $row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')">'.$row_WAITING['DESCRIP'].'</td>
+<td onclick="setpatient(\''.$row_WAITING['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_WAITING['PETNAME']).'\',\''.$row_WAITING['CUSTNO'].'\',\''.$row_WAITING['RFPETID'].'\',\'2\',\''.$row_WAITING['RECEPID'].'\',\''.$row_WAITING['PSEX'].'\')"><span ';
 		if ($filter=="PHONE"){echo "class='hidden'";} 
 echo	'>'.substr($row_WAITING['PROBLEM'],0,30).'</span><span ';
 		if ($filter=="PROBLEM"){echo "class='hidden'";}
@@ -474,11 +474,11 @@ echo	'>('.$row_WAITING['AREA1'].')'.$row_WAITING['PH1'].', ('.$row_WAITING['AREA
 echo  '<tr heigth"15" class="Verdana11" id="'.$row_ADMITTED['RECEPID'].'"  onmouseover="highliteline(this.id,\'';
 		if ($row_ADMITTED['PSEX']=='M'){echo '#DBEBF0';} else {echo '#F9DEE9';}
 echo  '\')" onmouseout="whiteoutline(this.id);" ondblclick="openquery(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'1\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')" >
-<td class="Courier11" width="50" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">'.$row_ADMITTED['DATEIN'].'</td>
+<td class="Courier11" width="50" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">'.$row_ADMITTED['DATEIN'].'</td>
 <td width="60" align="center"';
 		
 		if ($ref=="DEL"){echo "style='display:none'";}
-echo	'onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">';
+echo	'onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">';
 
 if (substr($row_ADMITTED['CLINICIAN'],0,3)=='Dr.'){echo substr($row_ADMITTED['CLINICIAN'],4,8);} else {echo substr($row_ADMITTED['CLINICIAN'],0,8);}
 
@@ -489,10 +489,10 @@ echo 	'</td>
 echo	'onclick="deletion(\'a'. $row_ADMITTED['RECEPID'].'\')" onmouseover="CursorToPointer(this.id);">
 X
 </td>
-<td width="120" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''. $row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')" >'.$row_ADMITTED['NAME'].",&nbsp;".$row_ADMITTED['FNAME'].'</td>
-<td width="100" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">'.$row_ADMITTED['PETNAME'].'</td>
-<td width="140" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''. $row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">'.$row_ADMITTED['DESCRIP'].'</td>
-<td onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')"><span ';
+<td width="120" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''. $row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')" >'.$row_ADMITTED['NAME'].",&nbsp;".$row_ADMITTED['FNAME'].'</td>
+<td width="100" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">'.$row_ADMITTED['PETNAME'].'</td>
+<td width="140" onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''. $row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')">'.$row_ADMITTED['DESCRIP'].'</td>
+<td onclick="setpatient(\''.$row_ADMITTED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_ADMITTED['PETNAME']).'\',\''.$row_ADMITTED['CUSTNO'].'\',\''.$row_ADMITTED['RFPETID'].'\',\'2\',\''.$row_ADMITTED['RECEPID'].'\',\''.$row_ADMITTED['PSEX'].'\')"><span ';
 		if ($filter=="PHONE"){echo "class='hidden'";} 
 echo	'>'.substr($row_ADMITTED['PROBLEM'],0,30).'</span><span ';
 		if ($filter=="PROBLEM"){echo "class='hidden'";}
@@ -522,13 +522,13 @@ echo	'>('.$row_ADMITTED['AREA1'].')'.$row_ADMITTED['PH1'].', ('.$row_ADMITTED['A
 echo  '<tr heigth"15" class="Verdana11" id="'.$row_DISCHARGED['RECEPID'].'"  onmouseover="highliteline(this.id,\'';
 		if ($row_DISCHARGED['PSEX']=='M'){echo '#DBEBF0';} else {echo '#F9DEE9';}
 echo  '\')" onmouseout="whiteoutline(this.id);" ondblclick="openquery(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'1\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')" >
-<td class="Courier11" width="50" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">'.$row_DISCHARGED['DATEIN'].'</td>
+<td class="Courier11" width="50" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">'.$row_DISCHARGED['DATEIN'].'</td>
 <td width="60" align="center"';
 
 if (substr($row_DISCHARGED['CLINICIAN'],0,3)=='Dr.'){echo substr($row_DISCHARGED['CLINICIAN'],4,8);} else {echo substr($row_DISCHARGED['CLINICIAN'],0,8);}
 		
 		if ($ref=="DEL"){echo "style='display:none'";}
-echo	'onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">';
+echo	'onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">';
 
 echo 	'</td>
 <td width="60" class="Verdana13BRed" id="a'.$row_DISCHARGED['RECEPID'].'" align="center"';
@@ -537,10 +537,10 @@ echo 	'</td>
 echo	'onclick="deletion(\'a'. $row_DISCHARGED['RECEPID'].'\')" onmouseover="CursorToPointer(this.id);">
 X
 </td>
-<td width="120" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''. $row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')" >'.$row_DISCHARGED['NAME'].",&nbsp;".$row_DISCHARGED['FNAME'].'</td>
-<td width="100" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">'.$row_DISCHARGED['PETNAME'].'</td>
-<td width="140" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''. $row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">'.$row_DISCHARGED['DESCRIP'].'</td>
-<td onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysql_real_escape_string($row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')"><span ';
+<td width="120" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''. $row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')" >'.$row_DISCHARGED['NAME'].",&nbsp;".$row_DISCHARGED['FNAME'].'</td>
+<td width="100" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">'.$row_DISCHARGED['PETNAME'].'</td>
+<td width="140" onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''. $row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')">'.$row_DISCHARGED['DESCRIP'].'</td>
+<td onclick="setpatient(\''.$row_DISCHARGED['RFPETTYPE'].'\',\''.mysqli_real_escape_string($mysqli_link, $row_DISCHARGED['PETNAME']).'\',\''.$row_DISCHARGED['CUSTNO'].'\',\''.$row_DISCHARGED['RFPETID'].'\',\'2\',\''.$row_DISCHARGED['RECEPID'].'\',\''.$row_DISCHARGED['PSEX'].'\')"><span ';
 		if ($filter=="PHONE"){echo "class='hidden'";} 
 echo	'>'.substr($row_DISCHARGED['PROBLEM'],0,30).'</span><span ';
 		if ($filter=="PROBLEM"){echo "class='hidden'";}

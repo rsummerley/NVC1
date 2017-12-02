@@ -10,18 +10,18 @@ $_SESSION['dischgpetid']=array();
 
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
 $row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$_SESSION['client']/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
 
 	$query_CHECKTABLE="SELECT * FROM $treatmxx";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	$create_TREATMXX="CREATE TABLE $treatmxx LIKE $treatmxx";
-	$result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	$result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	}
 
 $petids2=array_unique($petids2);
@@ -31,7 +31,7 @@ $petids2=array_unique($petids2);
 foreach ($petids2 as $pet){
 
 $select_MEDNOTE="SELECT * FROM MEDNOTES WHERE NPET='$patient'";
-$select_MEDNOTE = mysql_query($select_MEDNOTE, $tryconnection) or die(mysql_error());
+$select_MEDNOTE = mysqli_query($tryconnection, $select_MEDNOTE) or die(mysqli_error($mysqli_link));
 $row_MEDNOTE = mysqli_fetch_assoc($select_MEDNOTE);
 
 $sumhxcats=2;
@@ -39,8 +39,8 @@ $sumhxcats=2;
 if (!empty($row_MEDNOTE)){
 
 //HEADING FOR EXAM
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','EXAMINATION', $sumhxcats,'11', '".mysql_real_escape_string($_SESSION['invline'][0]['INVDOC'])."', NOW())";
-mysql_query($insertSQL, $tryconnection);
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','EXAMINATION', $sumhxcats,'11', '".mysqli_real_escape_string($mysqli_link, $_SESSION['invline'][0]['INVDOC'])."', NOW())";
+mysqli_query($tryconnection, $insertSQL);
 
 
 
@@ -58,8 +58,8 @@ $nproblem=array();
 	}//if (strlen($row_MEDNOTE['NPROBLEM']) > 200)
 
 foreach ($nproblem as $nproblem1){
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysql_real_escape_string($nproblem1)."', $sumhxcats,'12', '".mysql_real_escape_string($_SESSION['invline'][0]['INVDOC'])."', NOW())";
-mysql_query($insertSQL, $tryconnection);
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysqli_real_escape_string($mysqli_link, $nproblem1)."', $sumhxcats,'12', '".mysqli_real_escape_string($mysqli_link, $_SESSION['invline'][0]['INVDOC'])."', NOW())";
+mysqli_query($tryconnection, $insertSQL);
 }//foreach ($nproblem as $nproblem1)
 
 
@@ -77,8 +77,8 @@ $ndiagnosis=array();
 	}//if (strlen($row_MEDNOTE['NDIAGNOSIS']) > 200)
 
 foreach ($ndiagnosis as $ndiagnosis1){
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysql_real_escape_string($ndiagnosis1)."', $sumhxcats,'13', '".mysql_real_escape_string($_SESSION['invline'][0]['INVDOC'])."', NOW())";
-mysql_query($insertSQL, $tryconnection);
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysqli_real_escape_string($mysqli_link, $ndiagnosis1)."', $sumhxcats,'13', '".mysqli_real_escape_string($mysqli_link, $_SESSION['invline'][0]['INVDOC'])."', NOW())";
+mysqli_query($tryconnection, $insertSQL);
 }//foreach ($ndiagnosis as $ndiagnosis1)
 
 
@@ -96,8 +96,8 @@ $nprocedures=array();
 	}//if (strlen($row_MEDNOTE['NPROCEDURES']) > 200)
 
 foreach ($nprocedures as $nprocedures1){
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysql_real_escape_string($nprocedures1)."', $sumhxcats,'16', '".mysql_real_escape_string($_SESSION['invline'][0]['INVDOC'])."', NOW())";
-mysql_query($insertSQL, $tryconnection);
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysqli_real_escape_string($mysqli_link, $nprocedures1)."', $sumhxcats,'16', '".mysqli_real_escape_string($mysqli_link, $_SESSION['invline'][0]['INVDOC'])."', NOW())";
+mysqli_query($tryconnection, $insertSQL);
 }//foreach ($subtotalcomment as $subtcom)
 
 
@@ -115,8 +115,8 @@ $nclinstr=array();
 	}//if (strlen($row_MEDNOTE['NCLINSTR']) > 200)
 
 foreach ($nclinstr as $nclinstr1){
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysql_real_escape_string($nclinstr1)."', $sumhxcats,'17', '".mysql_real_escape_string($_SESSION['invline'][0]['INVDOC'])."', NOW())";
-mysql_query($insertSQL, $tryconnection);
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysqli_real_escape_string($mysqli_link, $nclinstr1)."', $sumhxcats,'17', '".mysqli_real_escape_string($mysqli_link, $_SESSION['invline'][0]['INVDOC'])."', NOW())";
+mysqli_query($tryconnection, $insertSQL);
 }//foreach ($nclinstr as $nclinstr1)
 
 
@@ -134,8 +134,8 @@ $ncasesum=array();
 	}//if (strlen($row_MEDNOTE['NCASESUM']) > 200)
 
 foreach ($ncasesum as $ncasesum1){
-$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysql_real_escape_string($ncasesum1)."', $sumhxcats,'18', '".mysql_real_escape_string($_SESSION['invline'][0]['INVDOC'])."', NOW())";
-mysql_query($insertSQL, $tryconnection);
+$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client','$pet','".mysqli_real_escape_string($mysqli_link, $ncasesum1)."', $sumhxcats,'18', '".mysqli_real_escape_string($mysqli_link, $_SESSION['invline'][0]['INVDOC'])."', NOW())";
+mysqli_query($tryconnection, $insertSQL);
 }//foreach ($ncasesum as $ncasesum1)
 
 

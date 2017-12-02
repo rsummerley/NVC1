@@ -2,9 +2,9 @@
 session_start();
 require_once('../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLIENT = sprintf("SELECT * FROM ARCUSTO WHERE CUSTNO = '%s'", $_GET['client']);
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
 $row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 if (!empty($_POST['phonea'])){$phone=$_POST['phonea'].'-'.$_POST['phoneb'];}
@@ -20,12 +20,12 @@ if (!empty($_POST['phone8a'])){$phone8=$_POST['phone8a'].'-'.$_POST['phone8b'];}
 if (isset($_POST['save']) && $_GET['client']!="0") {
 $updateSQL = sprintf("UPDATE ARCUSTO SET TITLE='%s', CONTACT='%s', COMPANY='%s', ADDRESS1='%s', ADDRESS2='%s', CITY='%s', `STATE`='%s', ZIP='%s', COUNTRY='%s', CAREA='%s', CAREA2='%s', CAREA3='%s', CAREA4='%s', CAREA5='%s', CAREA6='%s', CAREA7='%s', CAREA8='%s', PHONE='%s', PHONE2='%s', PHONE3='%s', PHONE4='%s', PHONE5='%s', PHONE6='%s', PHONE7='%s', PHONE8='%s', EMAIL='%s', CBEXT='%s', CBEXT2='%s', REFVET='%s', REFCLIN='%s', `COMMENT`='%s', PHMEMO='%s', PHMEMO2='%s', REMINDERS='%s', INACTIVE='%s' WHERE CUSTNO='%s' LIMIT 1",
                        $_POST['title'], 
-                       mysql_real_escape_string($_POST['CONTACT']), 
-                       mysql_real_escape_string($_POST['COMPANY']), 
-                       mysql_real_escape_string($_POST['address1']), 
-                       mysql_real_escape_string($_POST['address2']), 
-                       mysql_real_escape_string($_POST['city']), 
-                       mysql_real_escape_string($_POST['state']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['CONTACT']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['COMPANY']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['address1']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['address2']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['city']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['state']), 
                        strtoupper($_POST['zip']), 
                        $_POST['country'], 
                        $_POST['carea'], 
@@ -44,18 +44,18 @@ $updateSQL = sprintf("UPDATE ARCUSTO SET TITLE='%s', CONTACT='%s', COMPANY='%s',
 					   $phone6,
 					   $phone7,
 					   $phone8,
-                       mysql_real_escape_string(strtolower($_POST['email'])), 
+                       mysqli_real_escape_string($mysqli_link, strtolower($_POST['email'])), 
                        $_POST['cbext'], 
                        $_POST['cbext2'], 
-                       mysql_real_escape_string($_POST['refvet']), 
-                       mysql_real_escape_string($_POST['refclin']), 
-                       mysql_real_escape_string($_POST['comment']), 
-                       mysql_real_escape_string($_POST['phmemo']), 
-                       mysql_real_escape_string($_POST['phmemo2']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['refvet']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['refclin']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['comment']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['phmemo']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['phmemo2']), 
                        $_POST['reminders'],
 					   $_POST['inactive'], 
                        $_GET['client']);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 //header("Location: CLIENT_PATIENT_FILE.php?client=".$_GET['client']);
 $wingoback="history.go(-2);";
 }
@@ -63,21 +63,21 @@ $wingoback="history.go(-2);";
 else if (isset($_POST['save']) && $_GET['client'] == '0') {
 //get the CUSTNO from CRITDATA
 $query_CUSTNO = "SELECT LASTCUST FROM CRITDATA LIMIT 1 ";
-$CUSTNO = mysql_query($query_CUSTNO, $tryconnection) or die(mysql_error());
+$CUSTNO = mysqli_query($tryconnection, $query_CUSTNO) or die(mysqli_error($mysqli_link));
 $row_CUSTNO = mysqli_fetch_assoc($CUSTNO);
 $newcustno=$row_CUSTNO['LASTCUST']+1;
 //update CRITDATA with the new custno
 $update_CRITDATA="UPDATE CRITDATA SET LASTCUST='$newcustno'";
-$CRITDATA=mysql_query($update_CRITDATA, $tryconnection) or die(mysql_error());
+$CRITDATA=mysqli_query($tryconnection, $update_CRITDATA) or die(mysqli_error($mysqli_link));
 //insert the new patient into ARCUST
 $insertSQL = sprintf("INSERT INTO ARCUSTO (CUSTNO, TITLE, CONTACT, COMPANY, ADDRESS1, ADDRESS2, CITY, `STATE`, ZIP, COUNTRY, CAREA, CAREA2, CAREA3, CAREA4, CAREA5, CAREA6, CAREA7, CAREA8, PHONE, PHONE2, PHONE3, PHONE4, PHONE5, PHONE6, PHONE7, PHONE8, EMAIL, CBEXT, CBEXT2, REFVET, REFCLIN, `COMMENT`, PHMEMO, PHMEMO2, REMINDERS, BALANCE, INACTIVE) VALUES ('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
                        $newcustno, 
                        $_POST['title'], 
-                       mysql_real_escape_string($_POST['CONTACT']), 
-                       mysql_real_escape_string($_POST['COMPANY']), 
-                       mysql_real_escape_string($_POST['address1']), 
-                       mysql_real_escape_string($_POST['address2']), 
-                       mysql_real_escape_string($_POST['city']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['CONTACT']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['COMPANY']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['address1']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['address2']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['city']), 
                        $_POST['state'], 
                        strtoupper($_POST['zip']), 
                        $_POST['country'], 
@@ -97,19 +97,19 @@ $insertSQL = sprintf("INSERT INTO ARCUSTO (CUSTNO, TITLE, CONTACT, COMPANY, ADDR
 					   $phone6,
 					   $phone7,
 					   $phone8,
-                       mysql_real_escape_string(strtolower($_POST['email'])),
+                       mysqli_real_escape_string($mysqli_link, strtolower($_POST['email'])),
                        $_POST['cbext'], 
                        $_POST['cbext2'], 
-                       mysql_real_escape_string($_POST['refvet']), 
-                       mysql_real_escape_string($_POST['refclin']), 
-                       mysql_real_escape_string($_POST['comment']), 
-                       mysql_real_escape_string($_POST['phmemo']), 
-                       mysql_real_escape_string($_POST['phmemo2']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['refvet']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['refclin']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['comment']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['phmemo']), 
+                       mysqli_real_escape_string($mysqli_link, $_POST['phmemo2']), 
                        $_POST['reminders'],
 					   "0.00",
                        $_POST['inactive']
 					   );
-$Result1 = mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 header("Location: CLIENT_PATIENT_FILE.php?client=$newcustno");
 //$wingoback="history.go(-2);";
 }

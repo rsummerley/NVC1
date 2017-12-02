@@ -9,18 +9,18 @@ else if (isset($_SESSION['patient'])){
 $patient=$_SESSION['patient'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $query_PATIENT = "SELECT PWEIGHT FROM PETMAST WHERE PETID = '$patient'";
-$PATIENT = mysql_query($query_PATIENT, $tryconnection) or die(mysql_error());
+$PATIENT = mysqli_query($tryconnection, $query_PATIENT) or die(mysqli_error($mysqli_link));
 $row_PATIENT = mysqli_fetch_assoc($PATIENT);
 
 
 if (isset($_POST['save'])){
 $update_PETMAST="UPDATE PETMAST SET PWEIGHT='$_POST[pweight]' WHERE PETID='$patient'";
-$result=mysql_query($update_PETMAST, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $update_PETMAST) or die(mysqli_error($mysqli_link));
 $insert_PWEIGHTS="INSERT INTO PWEIGHTS (WPETID, WEIGHT) VALUES ('$patient','$_POST[pweight]')";
-$result=mysql_query($insert_PWEIGHTS, $tryconnection) or die(mysql_error());
+$result=mysqli_query($tryconnection, $insert_PWEIGHTS) or die(mysqli_error($mysqli_link));
 $closewin='opener.document.location.reload(); self.close(); opener.document.comingfromquickweight.submit();';
 }
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

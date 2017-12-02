@@ -12,9 +12,9 @@ elseif (isset($_SESSION['client'])){
 $client=$_SESSION['client'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLIENT = sprintf("SELECT CUSTNO, SOURCE, CODE, TERMS, SVC, DISC, CVISIT, PTAX, GTAX, LOCKED FROM ARCUSTO WHERE CUSTNO = '$client' LIMIT 1");
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
 $row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 if (isset($_POST['save'])) {
@@ -30,7 +30,7 @@ $updateSQL = sprintf("UPDATE ARCUSTO SET SOURCE='%s', CODE='%s', TERMS='%s', SVC
 					   date("Y-m-d H:i:s"),
                        !empty($_POST['locked']) ? "1" : "0"
                        );
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 }?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>

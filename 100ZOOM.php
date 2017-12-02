@@ -5,10 +5,10 @@ include("../ASSETS/age.php");
 
 $client=$_GET['client'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 ////////////////////////////////// CLIENT ///////////////////////////////////
 $query_CLIENT = "SELECT * FROM ARCUSTO WHERE CUSTNO = '$client'";
-$CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error());
+$CLIENT = mysqli_query($tryconnection, $query_CLIENT) or die(mysqli_error($mysqli_link));
 $row_CLIENT = mysqli_fetch_assoc($CLIENT);
 ///////////////////////////////// PATIENTS ////////////////////////////////////
 $pdead=" AND PDEAD=0";
@@ -16,7 +16,7 @@ if (isset($_GET['pdead'])){
 $pdead='';
 }
 $query_PATIENTS = "SELECT PETID, CUSTNO, PETNO, PETNAME, PETTYPE, PETBREED, PSEX, PDOB, PWEIGHT, PDEAD FROM PETMAST WHERE CUSTNO = '$client'".$pdead." ORDER BY PETNAME ASC";
-$PATIENTS = mysql_query($query_PATIENTS, $tryconnection) or die(mysql_error());
+$PATIENTS = mysqli_query($tryconnection, $query_PATIENTS) or die(mysqli_error($mysqli_link));
 $row_PATIENTS = mysqli_fetch_assoc($PATIENTS);
 $totalRows_PATIENTS = mysqli_num_rows($PATIENTS);
 

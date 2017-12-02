@@ -12,9 +12,9 @@ $patient=$_GET['patient'];
 $client=$_GET['client'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_RECEP = "SELECT *, DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN, DATE_FORMAT(TIME, '%H:%i') AS TIME FROM RECEP WHERE RECEPID='$recepid' OR RFPETID='$patient' ORDER BY DATETIME DESC LIMIT 1";
-$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
+$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
 $row_RECEP = mysqli_fetch_assoc($RECEP);
 
 $patient=$row_RECEP['RFPETID'];
@@ -29,32 +29,32 @@ include("../ASSETS/photo_directory.php");
 
 
 if ((isset($_POST['save']) || isset($_POST['record'])) && ($recepid=="0" || empty($row_RECEP))){
-$query_insertSQL="INSERT INTO RECEP (CUSTNO, NAME, RFPETID, PETNAME, PSEX, RFPETTYPE, LOCATION, DESCRIP, FNAME, PROBLEM, AREA1, PH1, AREA2, PH2, AREA3, PH3, DATEIN, TIME, DATETIME, CLINICIAN) VALUES ('$row_PATIENT_CLIENT[CUSTNO]', '".mysql_real_escape_string($row_PATIENT_CLIENT['COMPANY'])."', '$row_PATIENT_CLIENT[PETID]', '".mysql_real_escape_string($row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PSEX]', '$_POST[rfpettype]', '$_POST[location]', '".mysql_real_escape_string($row_PATIENT_CLIENT['PETBREED'])."','$row_PATIENT_CLIENT[CONTACT]','".mysql_real_escape_string($_POST['problem'])."','$row_PATIENT_CLIENT[AREA]','$row_PATIENT_CLIENT[PHONE]','$row_PATIENT_CLIENT[CAREA2]','$row_PATIENT_CLIENT[PHONE2]','$row_PATIENT_CLIENT[CAREA3]','$row_PATIENT_CLIENT[PHONE3]',STR_TO_DATE('$_POST[datein]','%m/%d/%Y'),STR_TO_DATE('$time','H:i'),NOW(), '".mysql_real_escape_string($_POST['clinician'])."')";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+$query_insertSQL="INSERT INTO RECEP (CUSTNO, NAME, RFPETID, PETNAME, PSEX, RFPETTYPE, LOCATION, DESCRIP, FNAME, PROBLEM, AREA1, PH1, AREA2, PH2, AREA3, PH3, DATEIN, TIME, DATETIME, CLINICIAN) VALUES ('$row_PATIENT_CLIENT[CUSTNO]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['COMPANY'])."', '$row_PATIENT_CLIENT[PETID]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETNAME'])."', '$row_PATIENT_CLIENT[PSEX]', '$_POST[rfpettype]', '$_POST[location]', '".mysqli_real_escape_string($mysqli_link, $row_PATIENT_CLIENT['PETBREED'])."','$row_PATIENT_CLIENT[CONTACT]','".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."','$row_PATIENT_CLIENT[AREA]','$row_PATIENT_CLIENT[PHONE]','$row_PATIENT_CLIENT[CAREA2]','$row_PATIENT_CLIENT[PHONE2]','$row_PATIENT_CLIENT[CAREA3]','$row_PATIENT_CLIENT[PHONE3]',STR_TO_DATE('$_POST[datein]','%m/%d/%Y'),STR_TO_DATE('$time','H:i'),NOW(), '".mysqli_real_escape_string($mysqli_link, $_POST['clinician'])."')";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 
 $updateSQL = "UPDATE PETMAST SET PWEIGHT='$_POST[pweight]' WHERE PETID='$patient' LIMIT 1";
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 
 $winback="window.open('RECEPTION_FILE.php','_self');";
 }
 
 else if ((isset($_POST['save']) || isset($_POST['record'])) && $recepid!="0"){
-$query_insertSQL="UPDATE RECEP SET LOCATION='2', PROBLEM='".mysql_real_escape_string($_POST['problem'])."', DATEIN=STR_TO_DATE('$_POST[datein]','%m/%d/%Y'), TIME=STR_TO_DATE('$time','H:i'), CLINICIAN='".mysql_real_escape_string($_POST['clinician'])."' WHERE RECEPID='$recepid' LIMIT 1";
-$insertSQL=mysql_query($query_insertSQL,$tryconnection) or die(mysql_error());
+$query_insertSQL="UPDATE RECEP SET LOCATION='2', PROBLEM='".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."', DATEIN=STR_TO_DATE('$_POST[datein]','%m/%d/%Y'), TIME=STR_TO_DATE('$time','H:i'), CLINICIAN='".mysqli_real_escape_string($mysqli_link, $_POST['clinician'])."' WHERE RECEPID='$recepid' LIMIT 1";
+$insertSQL=mysqli_query($tryconnection, $query_insertSQL) or die(mysqli_error($mysqli_link));
 
 $updateSQL = "UPDATE PETMAST SET PWEIGHT='$_POST[pweight]' WHERE PETID='$patient' LIMIT 1";
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 
 $winback="history.go(-2);";
 }
 
 else if (!empty($row_RECEP) && (isset($_POST['save']) || isset($_POST['record']))) {
 //move to discharged within the reception file
-$query_admit="UPDATE RECEP SET PROBLEM='".mysql_real_escape_string($_POST['problem'])."' WHERE RFPETID='$patient' LIMIT 1";
-$admit=mysql_query($query_admit,$tryconnection) or die(mysql_error());
+$query_admit="UPDATE RECEP SET PROBLEM='".mysqli_real_escape_string($mysqli_link, $_POST['problem'])."' WHERE RFPETID='$patient' LIMIT 1";
+$admit=mysqli_query($tryconnection, $query_admit) or die(mysqli_error($mysqli_link));
 
 $updateSQL = "UPDATE PETMAST SET PWEIGHT='$_POST[pweight]' WHERE PETID='$patient' LIMIT 1";
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 
 }
 
@@ -71,22 +71,22 @@ $Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
 if (isset($_POST['record'])){
 
 $query_PREFER="SELECT TRTMCOUNT FROM PREFER LIMIT 1";
-$PREFER= mysql_query($query_PREFER, $tryconnection) or die(mysql_error());
+$PREFER= mysqli_query($tryconnection, $query_PREFER) or die(mysqli_error($mysqli_link));
 $row_PREFER = mysqli_fetch_assoc($PREFER);
 
 $treatmxx=$client/$row_PREFER['TRTMCOUNT'];
 $treatmxx="TREATM".floor($treatmxx);
 
 	$query_CHECKTABLE="SELECT * FROM $treatmxx limit 1";
-	$CHECKTABLE= mysql_query($query_CHECKTABLE, $tryconnection) or $none=1;
+	$CHECKTABLE= mysqli_query($tryconnection, $query_CHECKTABLE) or $none=1;
 	
 	if (isset($none)){
 	$create_TREATMXX="CREATE TABLE $treatmxx LIKE TREATM0";
-	$result=mysql_query($create_TREATMXX, $tryconnection) or die(mysql_error());
+	$result=mysqli_query($tryconnection, $create_TREATMXX) or die(mysqli_error($mysqli_link));
 	}
 	//create the CLIENT COMMUNICATION heading
-	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$client', '$patient', 'EXAM', 16384, '81', NOW(), '".mysql_real_escape_string($_POST['clinician'])."')";
-	mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+	$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, TREATDATE, WHO) VALUE ('$client', '$patient', 'EXAM', 16384, '81', NOW(), '".mysqli_real_escape_string($mysqli_link, $_POST['clinician'])."')";
+	mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 	
 			$note=array();
 	
@@ -101,19 +101,19 @@ $treatmxx="TREATM".floor($treatmxx);
 			}
 			
 			foreach ($note as $note2){
-			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client', '$patient', '".mysql_real_escape_string($note2)."', 16384, '82', '".mysql_real_escape_string($_POST['clinician'])."', NOW())";
-			mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+			$insertSQL = "INSERT INTO $treatmxx (CUSTNO, PETID, TREATDESC, HCAT, HSUBCAT, WHO, TREATDATE) VALUES ('$client', '$patient', '".mysqli_real_escape_string($mysqli_link, $note2)."', 16384, '82', '".mysqli_real_escape_string($mysqli_link, $_POST['clinician'])."', NOW())";
+			mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 			}//foreach (($note as $note2)
 
 }
 
 
 $query_STAFF = sprintf("SELECT STAFF, STAFFINIT FROM STAFF WHERE SIGNEDIN=1 ORDER BY STAFF ASC");
-$STAFF = mysql_query($query_STAFF, $tryconnection) or die(mysql_error());
+$STAFF = mysqli_query($tryconnection, $query_STAFF) or die(mysqli_error($mysqli_link));
 $row_STAFF = mysqli_fetch_assoc($STAFF);
 
 $query_Doctor = "SELECT * FROM DOCTOR WHERE SIGNEDIN=1 AND INSTR(DOCTOR,'DVM') <> 0";
-$Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
+$Doctor = mysqli_query($tryconnection, $query_Doctor) or die(mysqli_error($mysqli_link));
 $row_Doctor = mysqli_fetch_assoc($Doctor);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

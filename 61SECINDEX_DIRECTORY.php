@@ -1,8 +1,8 @@
 <?php 
 require_once('../../tryconnection.php'); 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_SECINDEX = "SELECT * FROM SECINDEX WHERE CUSTNO = '$_GET[client]'";
-$SECINDEX = mysql_query($query_SECINDEX, $tryconnection) or die(mysql_error());
+$SECINDEX = mysqli_query($tryconnection, $query_SECINDEX) or die(mysqli_error($mysqli_link));
 $row_SECINDEX = mysqli_fetch_assoc($SECINDEX);
 $totalRows_SECINDEX = mysqli_num_rows($SECINDEX);
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

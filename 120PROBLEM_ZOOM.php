@@ -7,9 +7,9 @@ include("../ASSETS/age.php");
 $timeformat=$_SESSION['timeformat'];
 $recepid=$_GET['recepid'];
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_RECEP = "SELECT *, DATE_FORMAT(DATEIN, '%m/%d/%Y') AS DATEIN, DATE_FORMAT(TIME, '$timeformat') AS TIME FROM RECEP WHERE RECEPID='$recepid'";
-$RECEP = mysql_query($query_RECEP, $tryconnection) or die(mysql_error());
+$RECEP = mysqli_query($tryconnection, $query_RECEP) or die(mysqli_error($mysqli_link));
 $row_RECEP = mysqli_fetch_assoc($RECEP);
 
 
